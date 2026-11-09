@@ -1,0 +1,334 @@
+{
+ "conforme": {
+  "status": "CONFORME",
+  "falta": [],
+  "dets": [
+   [
+    4,
+    0.913
+   ],
+   [
+    2,
+    0.89
+   ],
+   [
+    0,
+    0.871
+   ]
+  ],
+  "w": 640,
+  "h": 960,
+  "credito": {
+   "autor": "OregonDOT",
+   "titulo": "Salem RR Depot - April 2014",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0/",
+   "fonte": "https://www.flickr.com/photos/28364885@N02/13972389965",
+   "derivada": null
+  }
+ },
+ "colete-ok": {
+  "status": "CONFORME",
+  "falta": [],
+  "dets": [
+   [
+    0,
+    0.893
+   ],
+   [
+    4,
+    0.823
+   ],
+   [
+    2,
+    0.763
+   ]
+  ],
+  "w": 960,
+  "h": 643,
+  "credito": {
+   "autor": "OregonDOT",
+   "titulo": "Installing solar panels",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0/",
+   "fonte": "https://www.flickr.com/photos/28364885@N02/3077176261",
+   "derivada": null
+  }
+ },
+ "capacete": {
+  "status": "CONFORME",
+  "falta": [],
+  "dets": [
+   [
+    0,
+    0.843
+   ],
+   [
+    4,
+    0.786
+   ],
+   [
+    3,
+    0.557
+   ]
+  ],
+  "w": 960,
+  "h": 640,
+  "credito": {
+   "autor": "Elvert Barnes",
+   "titulo": "24.MenWork.9F10.WDC.26sep05",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0/",
+   "fonte": "https://www.flickr.com/photos/95413346@N00/50843644",
+   "derivada": null
+  }
+ },
+ "sem-capacete": {
+  "status": "NAO_CONFORME",
+  "falta": [
+   "capacete",
+   "colete"
+  ],
+  "dets": [
+   [
+    4,
+    0.877
+   ],
+   [
+    4,
+    0.872
+   ],
+   [
+    3,
+    0.859
+   ],
+   [
+    0,
+    0.823
+   ],
+   [
+    1,
+    0.821
+   ],
+   [
+    3,
+    0.579
+   ]
+  ],
+  "w": 960,
+  "h": 720,
+  "credito": {
+   "autor": "Paul Keller",
+   "titulo": "construction workers (2)",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0/",
+   "fonte": "https://www.flickr.com/photos/18259771@N00/307442102",
+   "derivada": null
+  }
+ },
+ "sem-colete": {
+  "status": "NAO_CONFORME",
+  "falta": [
+   "colete"
+  ],
+  "dets": [
+   [
+    0,
+    0.89
+   ],
+   [
+    3,
+    0.829
+   ],
+   [
+    4,
+    0.804
+   ]
+  ],
+  "w": 640,
+  "h": 960,
+  "credito": {
+   "autor": "Elvert Barnes",
+   "titulo": "21.MenWork.9F10.WDC.26sep05",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0/",
+   "fonte": "https://www.flickr.com/photos/95413346@N00/50835653",
+   "derivada": null
+  }
+ },
+ "equipe": {
+  "status": "CONFORME",
+  "falta": [],
+  "dets": [
+   [
+    2,
+    0.941
+   ],
+   [
+    4,
+    0.909
+   ],
+   [
+    0,
+    0.895
+   ],
+   [
+    0,
+    0.881
+   ],
+   [
+    4,
+    0.85
+   ],
+   [
+    2,
+    0.793
+   ]
+  ],
+  "w": 960,
+  "h": 666,
+  "credito": {
+   "autor": "Thames Valley Housing",
+   "titulo": "Geeta Nanda",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0/",
+   "fonte": "https://www.flickr.com/photos/75513917@N03/9041281555",
+   "derivada": null
+  }
+ },
+ "tunel": {
+  "status": "CONFORME",
+  "falta": [],
+  "dets": [
+   [
+    0,
+    0.892
+   ],
+   [
+    0,
+    0.887
+   ],
+   [
+    2,
+    0.863
+   ],
+   [
+    2,
+    0.847
+   ],
+   [
+    4,
+    0.772
+   ],
+   [
+    4,
+    0.733
+   ]
+  ],
+  "w": 960,
+  "h": 638,
+  "credito": {
+   "autor": "Matt From London",
+   "titulo": "Geoff and Matt",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0/",
+   "fonte": "https://www.flickr.com/photos/57868312@N00/16852075938",
+   "derivada": null
+  }
+ },
+ "foto-certa": {
+  "status": "CONFORME",
+  "falta": [],
+  "dets": [
+   [
+    4,
+    0.913
+   ],
+   [
+    2,
+    0.89
+   ],
+   [
+    0,
+    0.871
+   ]
+  ],
+  "w": 640,
+  "h": 960,
+  "credito": {
+   "autor": "OregonDOT",
+   "titulo": "Salem RR Depot - April 2014",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0/",
+   "fonte": "https://www.flickr.com/photos/28364885@N02/13972389965",
+   "derivada": "original"
+  }
+ },
+ "foto-contraluz": {
+  "status": "NAO_CONFORME",
+  "falta": [
+   "capacete"
+  ],
+  "dets": [
+   [
+    2,
+    0.887
+   ],
+   [
+    4,
+    0.869
+   ]
+  ],
+  "w": 640,
+  "h": 960,
+  "credito": {
+   "autor": "OregonDOT",
+   "titulo": "Salem RR Depot - April 2014",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0/",
+   "fonte": "https://www.flickr.com/photos/28364885@N02/13972389965",
+   "derivada": "escurecida para simular contraluz"
+  }
+ },
+ "foto-longe": {
+  "status": "SEM_PESSOA",
+  "falta": [],
+  "dets": [],
+  "w": 640,
+  "h": 960,
+  "credito": {
+   "autor": "OregonDOT",
+   "titulo": "Salem RR Depot - April 2014",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0/",
+   "fonte": "https://www.flickr.com/photos/28364885@N02/13972389965",
+   "derivada": "reduzida sobre a foto \"Construction workers in Hong Kong\" (JoopDorresteijn, CC BY 2.0)"
+  }
+ },
+ "foto-cortada": {
+  "status": "NAO_CONFORME",
+  "falta": [
+   "capacete"
+  ],
+  "dets": [
+   [
+    4,
+    0.663
+   ],
+   [
+    2,
+    0.534
+   ]
+  ],
+  "w": 640,
+  "h": 557,
+  "credito": {
+   "autor": "OregonDOT",
+   "titulo": "Salem RR Depot - April 2014",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0/",
+   "fonte": "https://www.flickr.com/photos/28364885@N02/13972389965",
+   "derivada": "recortada"
+  }
+ }
+}

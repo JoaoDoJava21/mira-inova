@@ -1,0 +1,1454 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MIRA no INOVA 2026</title>
+<meta name="description" content="Faça a inspeção de EPI com a IA do MIRA: mande a foto com capacete e colete e receba o passe de obra. INOVA NACIONAL 2026.">
+<meta name="theme-color" content="#021849">
+<meta property="og:title" content="MIRA no INOVA NACIONAL 2026">
+<meta property="og:description" content="A IA que confere capacete e colete e libera a entrada na obra. Teste no seu celular.">
+<meta property="og:image" content="https://joaodojava21.github.io/mira-inova/img/og.jpg">
+<meta property="og:url" content="https://joaodojava21.github.io/mira-inova/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/icone-64.png" type="image/png">
+<link rel="apple-touch-icon" href="img/icone-180.png">
+<link rel="preload" href="mira_ppe.onnx" as="fetch" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: uma coluna de app com largura de celular (máx. 480px) sobre um campo azul-profundo quadriculado;
+   as telas trocam no lugar. O chat ocupa a tela toda, como um mensageiro. Visual único (claro), cores explícitas. */
+:root{
+  --navy:#021849;        /* Azul Profundo da marca MIRA */
+  --navy-2:#0a2a66;
+  --navy-3:#1b4796;
+  --hiviz:#ffc81e;       /* amarelo de sinalização */
+  --vest:#ff7a1a;        /* laranja do colete */
+  --reflect:#e6edf6;     /* faixa refletiva */
+  --ok:#139a52;
+  --ok-soft:#e2f5e9;
+  --bad:#d23a2c;
+  --bad-soft:#fce7e4;
+  --paper:#f3f5f9;
+  --card:#ffffff;
+  --ink:#0c1a33;
+  --muted:#56667f;
+  --line:#d5dde9;
+  --chat-bg:#e4e9f1;
+  --bubble-in:#ffffff;
+  --bubble-out:#d8f3cb;
+  --tick:#2a9de8;
+  --skin:#d9a173;
+  --skin-2:#b97f55;
+  --shirt:#5f7395;
+  --pants:#2a3b5a;
+  --white:#ffffff;
+  --on-navy:#ffffff;
+  --on-navy-2:#b9c7e3;
+  --f-display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
+  --f-body:"Barlow","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+html{height:100%;box-sizing:border-box;background:var(--navy);padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+img{max-width:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  height:100%;margin:0;overflow:hidden;
+  background-color:var(--navy);
+  background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+  background-size:28px 28px;
+  color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.45;
+  -webkit-tap-highlight-color:transparent;
+}
+button,input{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--hiviz);outline-offset:2px}
+.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+.app{position:relative;height:100%;max-width:480px;margin:0 auto;background:var(--paper);overflow:hidden;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 30px 90px rgba(0,0,0,.5)}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;background:var(--paper)}
+.screen.entering{animation:screenIn .42s cubic-bezier(.2,.8,.2,1)}
+@keyframes screenIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+
+.hazard{height:10px;flex:none;background:repeating-linear-gradient(-45deg,var(--hiviz) 0 12px,var(--navy) 12px 24px);background-size:34px 34px;animation:hazard 1.6s linear infinite}
+@keyframes hazard{to{background-position:34px 0}}
+
+/* ---------------- INÍCIO ---------------- */
+.home{background:var(--navy);color:var(--on-navy)}
+.home-photos{position:absolute;inset:0 0 auto 0;height:72%;overflow:hidden;pointer-events:none}
+.home-photos img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.6s ease;transform:scale(1.1)}
+.home-photos img.on{opacity:.55;animation:kenburns 8s linear forwards}
+@keyframes kenburns{from{transform:scale(1.14)}to{transform:scale(1.0)}}
+.home-photos::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,24,73,.25) 0%,rgba(2,24,73,.62) 42%,rgba(2,24,73,.9) 72%,var(--navy) 100%)}
+.home-fx{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.photo-credit{position:absolute;z-index:1;top:18px;right:max(16px,env(safe-area-inset-right,0px));font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;color:rgba(255,255,255,.7);background:rgba(2,24,73,.55);padding:3px 6px;border-radius:3px}
+.home-body{position:relative;z-index:1;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:22px;
+  padding-block:28px 18px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.event-tag{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:11.5px;font-weight:700;letter-spacing:.12em;
+  color:var(--navy);background:var(--hiviz);padding:6px 10px 6px 9px;border-radius:3px}
+.event-tag .dot{width:7px;height:7px;border-radius:50%;background:var(--navy);animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.15}}
+.home-logo{width:min(250px,64%);height:auto;display:block;filter:drop-shadow(0 6px 24px rgba(0,0,0,.35));animation:logoIn .9s cubic-bezier(.2,.9,.2,1) both}
+@keyframes logoIn{from{opacity:0;transform:translateY(-14px) scale(.96)}}
+.home-title{margin:0;font-family:var(--f-display);font-weight:800;text-transform:uppercase;font-size:clamp(34px,9.6vw,46px);line-height:.95;letter-spacing:.005em;text-wrap:balance}
+.home-title em{font-style:normal;color:var(--hiviz)}
+.home-lede{margin:-8px 0 0;color:var(--on-navy-2);font-size:16.5px;max-width:34ch}
+.home-actions{display:grid;gap:10px}
+.act{display:grid;grid-template-columns:44px minmax(0,1fr) 20px;align-items:center;gap:14px;text-decoration:none;
+  padding:14px 14px 14px 12px;border-radius:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  color:var(--on-navy);transition:transform .15s,background .15s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.act:hover{background:rgba(255,255,255,.12)}
+.act:active{transform:scale(.985)}
+.act .ico{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.1)}
+.act .ico svg{width:24px;height:24px}
+.act strong{display:block;font-weight:700;font-size:17px;line-height:1.2}
+.act small{display:block;color:var(--on-navy-2);font-size:13.5px;line-height:1.3;margin-top:2px}
+.act .arr{width:20px;height:20px;opacity:.7}
+.act-primary{background:var(--hiviz);border-color:var(--hiviz);color:var(--navy)}
+.act-primary:hover{background:#ffd447}
+.act-primary small{color:rgba(2,24,73,.75)}
+.act-primary .ico{background:var(--navy);color:var(--hiviz)}
+.act-primary{animation:pulseBtn 2.6s ease-in-out infinite}
+@keyframes pulseBtn{0%,100%{box-shadow:0 0 0 0 rgba(255,200,30,.0)}50%{box-shadow:0 0 0 7px rgba(255,200,30,.18)}}
+.home-specs{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.home-specs span:first-child{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-navy-2);margin-right:4px}
+.chip{font-family:var(--f-mono);font-size:12px;padding:4px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.22);color:var(--on-navy)}
+.home-foot{position:relative;z-index:1;margin:0;font-size:12.5px;color:var(--on-navy-2);
+  padding-block:10px calc(12px + env(safe-area-inset-bottom,0px));padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));
+  border-top:1px solid rgba(255,255,255,.1)}
+
+/* ---------------- CHAT ---------------- */
+.chat{background:var(--chat-bg)}
+.chat-head{position:relative;z-index:5;flex:none;display:flex;align-items:center;gap:10px;background:var(--navy);color:var(--on-navy);
+  padding-block:10px;padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;color:inherit;text-decoration:none;flex:none}
+.icon-btn:hover{background:rgba(255,255,255,.1)}
+.icon-btn svg{width:22px;height:22px}
+.avatar{width:42px;height:42px;border-radius:50%;flex:none;background:var(--white);display:grid;place-items:center;position:relative}
+.avatar svg{width:42px;height:42px}
+.avatar::after{content:"";position:absolute;right:0;bottom:1px;width:11px;height:11px;border-radius:50%;background:#2fd06d;border:2px solid var(--navy)}
+.who{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.who strong{font-size:17px;font-weight:700;display:flex;align-items:center;gap:6px}
+.who strong .verified{width:16px;height:16px;color:var(--hiviz)}
+.who span{font-size:13px;color:var(--on-navy-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who span.typing{color:var(--hiviz)}
+.menu{position:absolute;top:calc(100% - 4px);right:max(8px,env(safe-area-inset-right,0px));z-index:20;background:var(--card);color:var(--ink);border-radius:10px;
+  box-shadow:0 12px 40px rgba(2,24,73,.28);min-width:250px;padding:6px;display:grid;animation:menuIn .16s ease-out}
+@keyframes menuIn{from{opacity:0;transform:translateY(-6px) scale(.97)}}
+.menu button,.menu a{all:unset;box-sizing:border-box;cursor:pointer;padding:11px 12px;border-radius:7px;font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.menu button:hover,.menu a:hover,.menu button:focus-visible,.menu a:focus-visible{background:var(--paper)}
+.menu hr{border:0;border-top:1px solid var(--line);margin:4px 6px}
+.switch{width:34px;height:20px;border-radius:20px;background:var(--line);position:relative;flex:none;transition:background .15s}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--white);transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+[aria-pressed="true"] .switch{background:var(--bad)}
+[aria-pressed="true"] .switch::after{transform:translateX(14px)}
+.menu-note{font-size:12px;color:var(--muted);padding:0 12px 8px;line-height:1.35}
+
+.chat-area{position:relative;flex:1;min-height:0}
+.chat-area::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:url("img/logo.png") center 46%/min(70%,300px) auto no-repeat;opacity:.07}
+.chat-area::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.09;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140' fill='none' stroke='%23021849' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 34a14 14 0 0 1 28 0zM10 34h36M28 20v-4'/%3E%3Cpath d='M92 18l8-6 6 6 6-6 8 6v28H92z M106 18v28M92 30h28'/%3E%3Cpath d='M22 96l8 8 16-18'/%3E%3Ccircle cx='100' cy='100' r='3'/%3E%3Ccircle cx='124' cy='116' r='3'/%3E%3Cpath d='M103 100h12l9 13M70 64h10M75 59v10'/%3E%3Crect x='56' y='112' width='18' height='12' rx='3'/%3E%3Ccircle cx='65' cy='118' r='3'/%3E%3C/svg%3E");
+  background-size:140px 140px}
+.chat-scroll{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;z-index:1}
+.msgs{display:flex;flex-direction:column;gap:4px;padding-block:12px 18px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.sys{align-self:center;max-width:88%;text-align:center;font-size:12.5px;line-height:1.35;background:#fff6d6;color:#5b4a12;padding:7px 11px;border-radius:8px;box-shadow:0 1px 1px rgba(2,24,73,.08);margin:4px 0}
+.day{align-self:center;font-size:12px;font-weight:600;color:var(--muted);background:var(--card);padding:5px 11px;border-radius:8px;box-shadow:0 1px 1px rgba(2,24,73,.08);margin:6px 0 2px}
+.row{display:flex;flex-direction:column;max-width:84%;animation:msgIn .28s cubic-bezier(.2,.9,.3,1.2) both}
+.row.in{align-self:flex-start;transform-origin:0 100%}
+.row.out{align-self:flex-end;transform-origin:100% 100%}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px) scale(.94)}}
+.row + .row.in,.row + .row.out{margin-top:2px}
+.row.in + .row.out,.row.out + .row.in{margin-top:8px}
+.bubble{position:relative;padding:7px 9px 7px 10px;border-radius:9px;font-size:15.5px;line-height:1.38;box-shadow:0 1px 1px rgba(2,24,73,.13);overflow-wrap:anywhere}
+.in .bubble{background:var(--bubble-in);border-top-left-radius:2px}
+.out .bubble{background:var(--bubble-out);border-top-right-radius:2px}
+.in .bubble::before,.out .bubble::before{content:"";position:absolute;top:0;width:9px;height:12px}
+.in .bubble::before{left:-8px;background:var(--bubble-in);clip-path:polygon(100% 0,0 0,100% 100%)}
+.out .bubble::before{right:-8px;background:var(--bubble-out);clip-path:polygon(0 0,100% 0,0 100%)}
+.row.in + .row.in .bubble::before,.row.out + .row.out .bubble::before{display:none}
+.row.in + .row.in .bubble{border-top-left-radius:9px}
+.row.out + .row.out .bubble{border-top-right-radius:9px}
+.bubble strong{font-weight:700}
+.meta{float:right;display:inline-flex;align-items:center;gap:3px;margin:6px 0 -3px 10px;font-size:11px;color:var(--muted);line-height:1;position:relative;top:3px}
+.ticks{display:inline-flex;color:#8c9ab0;transition:color .3s}
+.ticks svg{width:17px;height:11px}
+.meta.read .ticks{color:var(--tick)}
+.typing-dots{display:inline-flex;gap:4px;padding:5px 2px}
+.typing-dots i{width:7px;height:7px;border-radius:50%;background:#93a1b6;animation:dot 1.1s infinite}
+.typing-dots i:nth-child(2){animation-delay:.15s}.typing-dots i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+
+.photo-bubble{padding:4px}
+.photo-bubble img{display:block;width:min(240px,62vw);max-width:100%;height:auto;border-radius:6px}
+.photo-bubble .meta{position:absolute;right:10px;bottom:9px;margin:0;top:auto;color:var(--white);text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.photo-bubble .meta .ticks{color:var(--white)}
+.photo-bubble .meta.read .ticks{color:#7fd0ff}
+
+/* botões de mensagem (estilo conta comercial) */
+.qbtns{display:grid;gap:3px;margin-top:3px}
+.qbtn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:8px 12px;border-radius:9px;background:var(--bubble-in);
+  color:#0d6fb8;font-weight:600;font-size:15px;text-decoration:none;cursor:pointer;box-shadow:0 1px 1px rgba(2,24,73,.13);border:0;text-align:center}
+.qbtn svg{width:18px;height:18px;flex:none}
+.qbtn:hover{background:#f5f8fc}
+.qbtn.main{color:var(--navy);background:var(--hiviz)}
+.qbtn.main:hover{background:#ffd447}
+.qbtns.off .qbtn.foto{opacity:.45;pointer-events:none}
+
+/* análise da foto */
+.analysis{padding:4px;width:min(272px,72vw);max-width:100%}
+.scan{position:relative;border-radius:6px;overflow:hidden;background:var(--navy)}
+.scan img{display:block;width:100%;height:auto;max-height:300px;object-fit:cover;filter:saturate(.85)}
+.scan-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,200,30,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(255,200,30,.18) 1px,transparent 1px);background-size:22px 22px;mix-blend-mode:screen;transition:opacity .4s}
+.scan-line{position:absolute;left:0;right:0;height:46px;top:-46px;background:linear-gradient(180deg,rgba(255,200,30,0),rgba(255,200,30,.45) 85%,var(--hiviz));box-shadow:0 2px 10px var(--hiviz);animation:scanY 1.5s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes scanY{from{top:-46px}to{top:100%}}
+.corner{position:absolute;width:20px;height:20px;border:3px solid var(--hiviz)}
+.corner.tl{top:8px;left:8px;border-right:0;border-bottom:0}.corner.tr{top:8px;right:8px;border-left:0;border-bottom:0}
+.corner.bl{bottom:8px;left:8px;border-right:0;border-top:0}.corner.br{bottom:8px;right:8px;border-left:0;border-top:0}
+.scan-tag{position:absolute;left:8px;bottom:8px;margin-left:26px;font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--navy);background:var(--hiviz);padding:3px 6px;border-radius:2px}
+.analysis.done .scan-line{display:none}
+.analysis.done .scan-grid{opacity:0}
+.analysis.aprov .corner{border-color:var(--ok)}
+.analysis.reprov .corner{border-color:var(--bad)}
+.analysis.aprov .scan-tag{background:var(--ok);color:var(--white)}
+.analysis.reprov .scan-tag{background:var(--bad);color:var(--white)}
+.analysis.done .scan::after{content:"";position:absolute;inset:0;border-radius:6px;animation:ring .7s ease-out}
+.analysis.aprov .scan::after{box-shadow:inset 0 0 0 4px var(--ok)}
+.analysis.reprov .scan::after{box-shadow:inset 0 0 0 4px var(--bad)}
+@keyframes ring{from{opacity:0}30%{opacity:1}}
+.checks{list-style:none;margin:8px 4px 2px;padding:0;display:grid;gap:5px}
+.checks li{display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:center;gap:8px;font-size:14.5px;animation:msgIn .25s ease both}
+.checks .st{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line);border-top-color:var(--navy-3);animation:spin .7s linear infinite}
+.checks .st svg{width:12px;height:12px;display:none}
+.checks li.yes .st{animation:pop .3s ease;border:0;background:var(--ok);color:var(--white)}
+.checks li.no .st{animation:pop .3s ease;border:0;background:var(--bad);color:var(--white)}
+.checks li.yes .st .i-yes,.checks li.no .st .i-no{display:block}
+.checks .val{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.checks li.yes .val{color:var(--ok)}.checks li.no .val{color:var(--bad)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{from{transform:scale(.3)}60%{transform:scale(1.15)}}
+.verdict{display:none;margin:8px 4px 2px;font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:.04em;text-align:center;padding:6px;border-radius:5px;line-height:1.1}
+.analysis.done .verdict{display:block;animation:stamp .45s cubic-bezier(.2,1.6,.4,1) both}
+.analysis.aprov .verdict{background:var(--ok-soft);color:var(--ok);border:2px solid var(--ok)}
+.analysis.reprov .verdict{background:var(--bad-soft);color:var(--bad);border:2px solid var(--bad)}
+@keyframes stamp{from{opacity:0;transform:scale(1.6) rotate(-6deg)}}
+
+/* passe de obra */
+.pass-row .bubble{padding:4px;background:transparent;box-shadow:none}
+.pass-row .bubble::before{display:none}
+.pass{position:relative;width:min(280px,74vw);max-width:100%;border-radius:12px;overflow:hidden;background:var(--navy);color:var(--on-navy);box-shadow:0 10px 30px rgba(2,24,73,.35);animation:passIn .7s cubic-bezier(.2,1.2,.3,1) both}
+@keyframes passIn{from{opacity:0;transform:rotateX(70deg) translateY(20px)}}
+.pass-stripe{height:12px;background:repeating-linear-gradient(-45deg,var(--hiviz) 0 10px,var(--navy) 10px 20px)}
+.pass-body{padding:14px 16px 14px;display:grid;gap:10px}
+.pass-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-navy-2)}
+.pass-name{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1;text-transform:uppercase;overflow-wrap:anywhere}
+.pass-status{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-weight:800;font-size:30px;letter-spacing:.05em;color:#3ee38a;line-height:1}
+.pass-status svg{width:30px;height:30px;flex:none}
+.pass-epis{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.pass-epis li{font-size:13px;font-weight:600;padding:4px 9px;border-radius:20px;background:rgba(62,227,138,.15);color:#bdf5d5;border:1px solid rgba(62,227,138,.35)}
+.pass-foot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--on-navy-2);border-top:1px dashed rgba(255,255,255,.2);padding-top:9px}
+.pass-sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.22) 48%,transparent 60%);transform:translateX(-120%);animation:sheen 2.8s 0.8s ease-in-out infinite}
+@keyframes sheen{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}
+
+/* barra de digitação */
+.chat-input{flex:none;position:relative;z-index:3;background:transparent;
+  padding-block:6px calc(8px + env(safe-area-inset-bottom,0px));padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
+.chat-input form{display:flex;align-items:flex-end;gap:6px}
+.field{flex:1;min-width:0;display:flex;align-items:center;gap:2px;background:var(--card);border-radius:24px;padding:4px 4px 4px 14px;box-shadow:0 1px 1px rgba(2,24,73,.12)}
+.field input{flex:1;min-width:0;border:0;background:transparent;font-size:16px;padding:8px 0;outline:none}
+.field input::placeholder{color:#8593a8}
+.cam-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--muted);cursor:pointer;flex:none;position:relative}
+.cam-btn svg{width:23px;height:23px}
+.cam-btn.attn{color:var(--navy);background:var(--hiviz);animation:camPulse 1.5s ease-in-out infinite}
+@keyframes camPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,200,30,.7)}60%{box-shadow:0 0 0 9px rgba(255,200,30,0)}}
+.cam-btn.disabled{opacity:.35;pointer-events:none}
+.send-btn{width:48px;height:48px;border-radius:50%;border:0;background:var(--navy);color:var(--white);display:grid;place-items:center;cursor:pointer;flex:none;transition:transform .12s}
+.send-btn:active{transform:scale(.92)}
+.send-btn svg{width:22px;height:22px}
+.send-btn:disabled{opacity:.5;cursor:default}
+
+.event-bar{flex:none;position:relative;z-index:3;background:var(--navy);color:var(--on-navy);overflow:hidden;animation:barIn .5s cubic-bezier(.2,.9,.2,1)}
+@keyframes barIn{from{transform:translateY(100%)}}
+.event-bar .hazard{height:8px}
+.event-inner{display:grid;gap:10px;padding-block:12px calc(12px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.event-inner p{margin:0;font-size:15px;line-height:1.35}
+.event-inner p strong{color:var(--hiviz);font-family:var(--f-display);font-size:19px;letter-spacing:.03em;text-transform:uppercase;display:block}
+.event-actions{display:flex;gap:8px}
+.event-actions button,.event-actions a{flex:1;min-height:42px;border-radius:9px;border:1px solid rgba(255,255,255,.25);background:transparent;color:var(--on-navy);font-weight:600;font-size:14.5px;display:grid;place-items:center;text-decoration:none;cursor:pointer;padding:6px}
+.event-actions .yel{background:var(--hiviz);border-color:var(--hiviz);color:var(--navy)}
+
+.confetti{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
+
+/* ---------------- PÁGINAS (demo + manual) ---------------- */
+.page-head{flex:none;display:flex;align-items:center;gap:8px;background:var(--navy);color:var(--on-navy);
+  padding-block:10px;padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.page-head h2{margin:0;flex:1;font-family:var(--f-display);font-weight:700;font-size:23px;letter-spacing:.02em;text-transform:uppercase}
+.pill{font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:3px;background:var(--hiviz);color:var(--navy)}
+.page-scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;
+  padding-block:16px calc(28px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:18px}
+.page-scroll > *,.home-body > *{flex-shrink:0}
+.lede{margin:0;color:var(--muted);font-size:15.5px}
+
+/* palco da demonstração */
+.stage-wrap{border-radius:14px;overflow:hidden;background:var(--navy);box-shadow:0 14px 40px rgba(2,24,73,.25)}
+.stage{position:relative;aspect-ratio:360/380;max-width:100%}
+.stage > svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hud{position:absolute;top:10px;left:12px;right:12px;display:flex;justify-content:space-between;gap:8px;font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;color:rgba(255,255,255,.85);pointer-events:none}
+.hud .rec{display:inline-flex;align-items:center;gap:6px}
+.hud .rec i{width:8px;height:8px;border-radius:50%;background:#ff4a3d;animation:blink 1s steps(2) infinite}
+.hud-b{position:absolute;bottom:10px;right:12px;font-family:var(--f-mono);font-size:10px;color:rgba(255,255,255,.6);pointer-events:none}
+.flash{position:absolute;inset:0;background:var(--white);opacity:0;pointer-events:none}
+.stage.s2 .flash{animation:flash .55s ease-out}
+.stage.s4 .flash{animation:flash2 .55s ease-out}
+@keyframes flash{0%{opacity:.9}100%{opacity:0}}
+@keyframes flash2{0%{opacity:.9}100%{opacity:0}}
+.stage-bubble{position:absolute;top:34px;left:12px;max-width:72%;background:var(--card);color:var(--ink);border-radius:10px;border-top-left-radius:2px;
+  padding:7px 10px 8px;font-size:13.5px;line-height:1.3;box-shadow:0 6px 20px rgba(0,0,0,.25);display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:start}
+.stage-bubble[hidden]{display:none!important}
+.stage-bubble.pop{animation:msgIn .32s cubic-bezier(.2,.9,.3,1.3)}
+.stage-bubble .mini-av{width:24px;height:24px;border-radius:50%;background:var(--navy);display:grid;place-items:center}
+.stage-bubble .mini-av svg{width:16px;height:16px}
+.stage-bubble b{display:block;font-size:11.5px;color:var(--navy-3)}
+.status-bar{display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:.06em;color:var(--white);background:#55627a;transition:background .35s}
+.status-bar[data-state="check"]{background:#b58a00}
+.status-bar[data-state="ok"]{background:var(--ok)}
+.status-bar[data-state="ok"] span{animation:stamp .45s cubic-bezier(.2,1.6,.4,1)}
+.status-bar svg{width:24px;height:24px}
+
+/* elementos do SVG do palco */
+.c-sky{fill:var(--navy)} .c-grid{stroke:rgba(255,255,255,.06)} .c-build{fill:var(--navy-2)} .c-build-2{fill:#123671}
+.c-line{stroke:#2b5aa8;fill:none} .c-ground{fill:#0d2557} .c-ground-2{fill:#163066}
+.c-skin{fill:var(--skin)} .c-skin-2{fill:var(--skin-2)} .c-shirt{fill:var(--shirt)} .c-pants{fill:var(--pants)} .c-shoe{fill:#1a1f2b}
+.c-helmet{fill:var(--hiviz)} .c-helmet-2{fill:#e0a800} .c-vest{fill:var(--vest)} .c-reflect{fill:var(--reflect)} .c-dark{fill:#1d2a44}
+.c-cap{fill:#2f6fd6} .c-cap-2{fill:#2459b0} .c-jacket{fill:#3b4558} .c-jacket-2{fill:#2e3646}
+.c-hair{fill:#3a2a1f}
+.c-post{fill:#9aa7bd} .c-arm{fill:var(--bad)} .c-arm-w{fill:var(--white)}
+.c-crane{stroke:var(--hiviz);fill:none;opacity:.55}
+.d-helmet{transform:translateY(-250px);opacity:0;transition:transform .75s cubic-bezier(.3,1.45,.55,1),opacity .2s}
+.s1 .d-helmet{transform:none;opacity:1}
+.d-vest{opacity:0;transform:translateY(-26px) scale(.86);transform-box:fill-box;transform-origin:50% 0;transition:opacity .35s,transform .6s cubic-bezier(.3,1.4,.5,1)}
+.s3 .d-vest{opacity:1;transform:none}
+.dbox{opacity:0;transition:opacity .3s}
+.dbox rect.b{fill:none;stroke-width:2.5;stroke-dasharray:420;stroke-dashoffset:420}
+.dbox .tag{font-family:var(--f-mono);font-size:9.5px;font-weight:700}
+.s2 .box-cap,.s4 .box-vest,.s4 .box-person{opacity:1}
+.s2 .box-cap rect.b,.s4 .box-vest rect.b,.s4 .box-person rect.b{animation:draw .7s ease forwards}
+.s4 .box-cap rect.b{animation:draw2 .7s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes draw2{from{stroke-dashoffset:420}to{stroke-dashoffset:0}}
+.s6 .dbox{opacity:0}
+.walker{transition:transform 3.2s linear}
+.s6 .walker{transform:translateX(255px)}
+.leg{transform-box:fill-box;transform-origin:50% 0}
+.s6 .leg-l{animation:swing .42s ease-in-out infinite alternate}
+.s6 .leg-r{animation:swing .42s ease-in-out infinite alternate-reverse}
+.s6 .body-bob{animation:bob .21s ease-in-out infinite alternate}
+@keyframes swing{from{transform:rotate(16deg)}to{transform:rotate(-16deg)}}
+@keyframes bob{to{transform:translateY(-3px)}}
+.barrier-arm{transform-box:view-box;transform-origin:247px 286px;transition:transform .9s cubic-bezier(.4,1.3,.5,1)}
+.s5 .barrier-arm{transform:rotate(-78deg)}
+.lamp{fill:var(--bad);transition:fill .3s}
+.s5 .lamp{fill:#3ee38a}
+.idle-breathe{animation:breathe 3s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes breathe{50%{transform:scaleY(1.012)}}
+.crane-hook{animation:hook 5s ease-in-out infinite}
+@keyframes hook{50%{transform:translateY(18px)}}
+.noanim,.noanim *{transition:none!important}
+
+.demo-ctrl{display:flex;gap:8px;margin-top:-6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600;font-size:15px;cursor:pointer;text-decoration:none}
+.btn svg{width:18px;height:18px}
+.btn:hover{border-color:var(--navy-3)}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:var(--white)}
+.btn.yel{background:var(--hiviz);border-color:var(--hiviz);color:var(--navy)}
+.btn.grow{flex:1}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:2px;counter-reset:st}
+.steps li{counter-increment:st;display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;align-items:start;padding:9px 10px;border-radius:10px;color:var(--muted);transition:background .25s,color .25s}
+.steps li::before{content:counter(st);width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:17px;background:var(--card);border:2px solid var(--line);color:var(--muted);transition:all .25s}
+.steps li strong{display:block;color:var(--ink);font-size:15.5px;line-height:1.25}
+.steps li span{font-size:14px;line-height:1.35}
+.steps li.on{background:var(--card);color:var(--ink);box-shadow:0 2px 10px rgba(2,24,73,.08)}
+.steps li.on::before{background:var(--hiviz);border-color:var(--hiviz);color:var(--navy)}
+.steps li.done::before{background:var(--ok);border-color:var(--ok);color:var(--white)}
+.cta-card{display:grid;gap:10px;padding:16px;border-radius:14px;background:var(--navy);color:var(--on-navy)}
+.cta-card h3{margin:0;font-family:var(--f-display);font-size:24px;text-transform:uppercase;letter-spacing:.02em;line-height:1}
+.cta-card p{margin:0;color:var(--on-navy-2);font-size:15px}
+
+/* manual */
+.flow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;list-style:none;margin:0;padding:0;counter-reset:fl}
+.flow li{counter-increment:fl;background:var(--card);border-radius:12px;padding:12px;display:grid;gap:4px;border:1px solid var(--line)}
+.flow li::before{content:"0" counter(fl);font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--navy-3);letter-spacing:.08em}
+.flow strong{font-size:15px;line-height:1.2}
+.flow span{font-size:13.5px;color:var(--muted);line-height:1.35}
+.sec{display:grid;gap:12px}
+.sec-h{display:flex;align-items:center;gap:10px;margin:6px 0 0}
+.sec-h .badge{width:38px;height:38px;border-radius:10px;background:var(--navy);display:grid;place-items:center;flex:none}
+.sec-h .badge svg{width:24px;height:24px}
+.sec-h h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:25px;text-transform:uppercase;letter-spacing:.02em;line-height:1}
+.sec-h small{display:block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-top:3px}
+.figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.figs.four{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fig{margin:0;background:var(--card);border-radius:12px;border:2px solid var(--line);overflow:hidden;display:flex;flex-direction:column}
+.fig > svg{display:block;width:100%;height:auto;background:#eaf0f8}
+.fig figcaption{padding:7px 8px 9px;font-size:13px;line-height:1.25;font-weight:600;display:grid;grid-template-columns:18px minmax(0,1fr);gap:6px;align-items:start}
+.fig .mk{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;color:var(--white)}
+.fig .mk svg{width:11px;height:11px;background:transparent}
+.fig.good{border-color:var(--ok)} .fig.good .mk{background:var(--ok)}
+.fig.bad .mk{background:var(--bad)}
+.fig.good svg.ill{animation:goodGlow 3s ease-in-out infinite}
+@keyframes goodGlow{50%{background:#e1f4e8}}
+.bob{animation:bob2 3.2s ease-in-out infinite}
+@keyframes bob2{50%{transform:translateY(-2px)}}
+.vf-line{animation:vfscan 2.4s linear infinite}
+@keyframes vfscan{from{transform:translateY(0)}to{transform:translateY(118px)}}
+.rules{list-style:none;margin:0;padding:0;display:grid;gap:0;background:var(--card);border-radius:12px;border:1px solid var(--line)}
+.rules li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;padding:10px 12px;font-size:15px;line-height:1.35;border-top:1px solid var(--line)}
+.rules li:first-child{border-top:0}
+.rules li svg{width:22px;height:22px;color:var(--ok)}
+.tbl-wrap{overflow-x:auto;background:var(--card);border-radius:12px;border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+th{border-top:0;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+td code{font-family:var(--f-mono);font-size:12.5px;padding:2px 5px;border-radius:4px;background:var(--paper);white-space:nowrap}
+td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
+.note{margin:0;font-size:14.5px;color:var(--muted);background:var(--card);border-left:4px solid var(--hiviz);padding:10px 12px;border-radius:0 10px 10px 0}
+.norms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.norm{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;display:grid;gap:3px}
+.norm b{font-family:var(--f-display);font-size:19px;letter-spacing:.02em;color:var(--navy)}
+.norm span{font-size:13.5px;color:var(--muted);line-height:1.3}
+
+/* fotos reais (manual e galeria) */
+.figs.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fig .ph{position:relative;aspect-ratio:4/5;overflow:hidden;background:#dfe6f0}
+.fig .ph img{display:block;width:100%;height:100%;object-fit:cover}
+.fig .ph::after{content:"";position:absolute;left:0;right:0;top:-30%;height:30%;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,200,30,0),rgba(255,200,30,.28));border-bottom:2px solid rgba(255,200,30,.8);animation:figscan 4.5s ease-in-out infinite}
+.fig:nth-child(2) .ph::after{animation-delay:1.2s}.fig:nth-child(3) .ph::after{animation-delay:2.4s}.fig:nth-child(4) .ph::after{animation-delay:3.4s}
+@keyframes figscan{0%{top:-30%}45%,100%{top:100%}}
+.res{position:absolute;left:6px;bottom:6px;z-index:1;font-family:var(--f-display);font-weight:800;font-size:13.5px;letter-spacing:.05em;padding:3px 7px 2px;border-radius:3px;color:var(--white);line-height:1.1}
+.fig.good .res,.gal .ok .res{background:var(--ok)}
+.fig.bad .res,.gal .no .res{background:var(--bad)}
+.fig figcaption small{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:2px}
+.gal{display:grid;grid-auto-flow:column;grid-auto-columns:78%;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;margin-inline:-4px;padding-inline:4px}
+.gal figure{margin:0;scroll-snap-align:start;background:var(--card);border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.gal .ph{position:relative;aspect-ratio:4/3;background:var(--navy)}
+.gal .ph img{display:block;width:100%;height:100%;object-fit:cover}
+.gal figcaption{padding:9px 11px 11px;font-size:14px;line-height:1.3}
+.gal figcaption b{display:block;font-size:15px}
+.gal figcaption span{color:var(--muted);font-size:13px}
+.credits{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:12.5px;color:var(--muted);line-height:1.35}
+.credits a{color:var(--navy-3)}
+/* carregamento da IA no chat */
+.sys.load{display:grid;gap:6px;min-width:220px}
+.bar{height:6px;border-radius:6px;background:rgba(91,74,18,.18);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--navy);border-radius:6px;transition:width .25s}
+.ex-tag{position:absolute;left:10px;top:10px;font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.06em;background:rgba(2,24,73,.8);color:var(--white);padding:3px 6px;border-radius:3px}
+.menu button[aria-disabled="true"]{opacity:.4;cursor:default}
+
+@media (max-width:370px){
+  .figs{gap:6px} .fig figcaption{font-size:12px}
+  .flow,.norms{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .scan-line{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<!-- símbolos SVG reutilizados -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></symbol>
+    <symbol id="i-cam" viewBox="0 0 24 24"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.7l1.3-2h5l1.3 2h1.7A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12.3" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12L20 4l-5 16-3-6.5z" fill="currentColor"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="19" r="2" fill="currentColor"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 18.5l1.3-3.6A7.5 7.5 0 1 1 8.6 18z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 10.5l2 2 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6.5" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="13.5" y="5" width="4" height="14" rx="1" fill="currentColor"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path d="M19 12a7 7 0 1 1-2.1-5M19 4v4h-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4.5h9.5A3.5 3.5 0 0 1 18 8v11.5H8.5A3.5 3.5 0 0 1 5 16z M5 16a3.5 3.5 0 0 1 3.5-3.5H18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></symbol>
+    <symbol id="i-badge" viewBox="0 0 24 24"><path d="M12 2.5l2.4 1.8 3-.1.9 2.9 2.4 1.8-.9 2.9.9 2.9-2.4 1.8-.9 2.9-3-.1L12 21.1l-2.4-1.8-3 .1-.9-2.9-2.4-1.8.9-2.9-.9-2.9 2.4-1.8.9-2.9 3 .1z" fill="currentColor"/><path d="M8.3 12.2l2.5 2.5 4.9-5" fill="none" stroke="#021849" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <!-- capacete usado como ícone -->
+    <symbol id="i-helmet" viewBox="0 0 24 24"><path d="M4 16a8 8 0 0 1 16 0z" fill="#ffc81e"/><rect x="2.5" y="15.5" width="19" height="3" rx="1.5" fill="#ffc81e"/><path d="M12 8v4M9 9.5v3M15 9.5v3" stroke="#021849" stroke-width="1.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-vest" viewBox="0 0 24 24"><path d="M8 3l-4 3v15h7V8zM16 3l4 3v15h-7V8z" fill="#ff7a1a"/><rect x="4" y="13" width="7" height="2" fill="#e6edf6"/><rect x="13" y="13" width="7" height="2" fill="#e6edf6"/></symbol>
+    <symbol id="i-photo" viewBox="0 0 24 24"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16" fill="none" stroke="#ffc81e" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10" r="2.6" fill="#ffffff"/><path d="M7.5 17a4.5 4.5 0 0 1 9 0" fill="#ffffff"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="#ffc81e" stroke-width="2"/><path d="M9 2.5v3M15 2.5v3M9 18.5v3M15 18.5v3M2.5 9h3M2.5 15h3M18.5 9h3M18.5 15h3" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/><rect x="9.5" y="9.5" width="5" height="5" fill="#ffffff"/></symbol>
+
+    <!-- avatar MIRA -->
+    <symbol id="mira-av" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="24" fill="#021849"/>
+      <path d="M11 28a13 13 0 0 1 26 0z" fill="#ffc81e"/>
+      <rect x="8.5" y="27" width="31" height="4.4" rx="2.2" fill="#ffc81e"/>
+      <path d="M24 16v5.5M19 18v3.6M29 18v3.6" stroke="#021849" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="24" cy="15.3" r="1.6" fill="#021849"/>
+      <path d="M15 37l3-3.4 3 2.4 3-3 3 3 3-2.4 3 3.4" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+  </defs>
+</svg>
+
+<!-- ================= INÍCIO ================= -->
+<section class="screen home" data-screen="inicio" aria-label="Início">
+  <div class="home-photos" id="homePhotos" aria-hidden="true">
+    <img src="img/equipe-ia.jpg" alt="" class="on" style="object-position:70% 30%">
+    <img src="img/tunel-ia.jpg" alt="" style="object-position:35% 30%" loading="lazy">
+    <img src="img/conforme-ia.jpg" alt="" style="object-position:50% 20%" loading="lazy">
+    <img src="img/colete-ok-ia.jpg" alt="" style="object-position:45% 30%" loading="lazy">
+  </div>
+  <canvas class="home-fx" id="homeFx" aria-hidden="true"></canvas>
+  <div class="hazard" aria-hidden="true" style="position:relative;z-index:1"></div>
+  <span class="photo-credit" aria-hidden="true">FOTO REAL · ANÁLISE DO MODELO MIRA</span>
+  <div class="home-body">
+    <div class="event-tag"><span class="dot" aria-hidden="true"></span>INOVA NACIONAL 2026</div>
+    <img class="home-logo" src="img/logo-branco.png" alt="MIRA, Modelo de Inspeção e Resposta Autônoma" width="280" height="151">
+    <h1 class="home-title">Sua entrada na obra passa pela <em>MIRA</em></h1>
+    <p class="home-lede">A IA que confere capacete e colete antes de liberar o trabalhador. Faça o teste pelo chat: a análise roda aqui, no seu celular.</p>
+    <nav class="home-actions" aria-label="O que fazer">
+      <a class="act act-primary" href="#chat">
+        <span class="ico"><svg aria-hidden="true"><use href="#i-chat"/></svg></span>
+        <span><strong>Fazer a inspeção no chat</strong><small>Mande suas fotos e receba o passe de obra</small></span>
+        <svg class="arr" aria-hidden="true"><use href="#i-arrow"/></svg>
+      </a>
+      <a class="act" href="#demo">
+        <span class="ico"><svg aria-hidden="true"><use href="#i-film"/></svg></span>
+        <span><strong>Ver demonstração</strong><small>Está sem EPI? Veja um trabalhador sendo liberado</small></span>
+        <svg class="arr" aria-hidden="true"><use href="#i-arrow"/></svg>
+      </a>
+      <a class="act" href="#manual">
+        <span class="ico"><svg aria-hidden="true"><use href="#i-book"/></svg></span>
+        <span><strong>Manual do EPI</strong><small>O jeito certo de usar e de tirar a foto</small></span>
+        <svg class="arr" aria-hidden="true"><use href="#i-arrow"/></svg>
+      </a>
+    </nav>
+    <div class="home-specs"><span>A MIRA reconhece</span><span class="chip">capacete</span><span class="chip">colete</span><span class="chip">luvas</span><span class="chip">óculos</span><span class="chip">cinturão</span></div>
+  </div>
+  <p class="home-foot">Na obra, o MIRA roda nas câmeras e em drone, direto no computador e sem internet. Aqui, o mesmo modelo roda no seu navegador.</p>
+</section>
+
+<!-- ================= CHAT ================= -->
+<section class="screen chat" data-screen="chat" aria-label="Conversa com a MIRA" hidden>
+  <header class="chat-head">
+    <a class="icon-btn" href="#inicio" aria-label="Voltar ao início"><svg aria-hidden="true"><use href="#i-back"/></svg></a>
+    <div class="avatar"><svg aria-hidden="true"><use href="#mira-av"/></svg></div>
+    <div class="who">
+      <strong>MIRA <svg class="verified" aria-label="conta verificada"><use href="#i-badge"/></svg></strong>
+      <span id="chatStatus">online</span>
+    </div>
+    <button class="icon-btn" id="menuBtn" type="button" aria-label="Opções da conversa" aria-expanded="false" aria-controls="menu"><svg aria-hidden="true"><use href="#i-dots"/></svg></button>
+    <div class="menu" id="menu" hidden>
+      <button type="button" id="mReset">Recomeçar a conversa</button>
+      <button type="button" id="mSemCap" data-exemplo="sem-capacete">Enviar exemplo: sem capacete</button>
+      <button type="button" id="mSemCol" data-exemplo="sem-colete">Enviar exemplo: sem colete</button>
+      <p class="menu-note">Modo apresentador: manda uma foto real de exemplo para mostrar a MIRA reprovando.</p>
+      <hr>
+      <a href="#demo">Ver demonstração</a>
+      <a href="#manual">Manual do EPI</a>
+    </div>
+  </header>
+  <div class="chat-area">
+    <div class="chat-scroll" id="chatScroll">
+      <div class="msgs" id="msgs" role="log" aria-live="polite"></div>
+    </div>
+  </div>
+  <footer class="chat-input" id="chatInput">
+    <form id="chatForm" autocomplete="off">
+      <div class="field">
+        <input id="chatText" type="text" maxlength="40" placeholder="Digite seu nome" aria-label="Mensagem" enterkeyhint="send">
+        <label class="cam-btn disabled" id="camBtn" for="foto" aria-label="Enviar foto"><svg aria-hidden="true"><use href="#i-cam"/></svg></label>
+      </div>
+      <button class="send-btn" type="submit" aria-label="Enviar"><svg aria-hidden="true"><use href="#i-send"/></svg></button>
+    </form>
+    <input class="sr" type="file" id="foto" accept="image/*" tabindex="-1">
+  </footer>
+  <div class="event-bar" id="eventBar" hidden>
+    <div class="hazard" aria-hidden="true"></div>
+    <div class="event-inner">
+      <p><strong>INOVA NACIONAL 2026</strong>Tenha uma boa imersão no evento e obrigado por visitar o MIRA!</p>
+      <div class="event-actions">
+        <button type="button" class="yel" id="againBtn">Refazer o teste</button>
+        <a href="#manual">Manual do EPI</a>
+        <a href="#inicio">Início</a>
+      </div>
+    </div>
+  </div>
+  <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+</section>
+
+<!-- ================= DEMONSTRAÇÃO ================= -->
+<section class="screen" data-screen="demo" aria-label="Demonstração" hidden>
+  <header class="page-head">
+    <a class="icon-btn" href="#inicio" aria-label="Voltar ao início"><svg aria-hidden="true"><use href="#i-back"/></svg></a>
+    <h2>Demonstração</h2><span class="pill">animação</span>
+  </header>
+  <div class="page-scroll">
+    <p class="lede">Sem EPI aí? Acompanhe um trabalhador passando pela MIRA, do jeito certo, até a cancela abrir.</p>
+    <div class="stage-wrap">
+      <div class="stage" id="stage">
+        <svg viewBox="0 0 360 380" aria-hidden="true">
+          <defs>
+            <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" class="c-grid" fill="none" stroke-width="1"/></pattern>
+            <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b4796" stop-opacity=".55"/><stop offset="1" stop-color="#021849" stop-opacity="0"/></linearGradient>
+          </defs>
+          <rect class="c-sky" width="360" height="380"/>
+          <rect width="360" height="380" fill="url(#grid)"/>
+          <rect width="360" height="200" fill="url(#glow)"/>
+          <!-- guindaste -->
+          <g class="c-crane" stroke-width="2.4">
+            <path d="M312 330V58M326 330V58M312 80l14 20M326 100l-14 20M312 120l14 20M326 140l-14 20M312 160l14 20M326 180l-14 20M312 200l14 20M326 220l-14 20M312 240l14 20M326 260l-14 20M312 280l14 20"/>
+            <path d="M120 58h236M120 70h192M312 58l-180 12M300 46l19-16 19 16"/>
+            <g class="crane-hook"><path d="M176 64v68"/><path d="M172 132h8v6a4 4 0 0 1-8 0" /><rect x="160" y="142" width="32" height="14" rx="1" stroke-width="2"/></g>
+          </g>
+          <!-- prédio em obra -->
+          <g>
+            <rect class="c-build" x="262" y="150" width="98" height="182"/>
+            <g class="c-line" stroke-width="1.6">
+              <path d="M262 190h98M262 230h98M262 270h98M262 310h98M282 150v182M304 150v182M326 150v182M348 150v182"/>
+              <path d="M262 190l20 40M282 190l22 40M304 230l22 40M326 270l22 40"/>
+            </g>
+            <rect class="c-build-2" x="268" y="196" width="10" height="28"/><rect class="c-build-2" x="330" y="276" width="14" height="28"/>
+          </g>
+          <!-- chão -->
+          <rect class="c-ground" y="330" width="360" height="50"/>
+          <rect class="c-ground-2" y="330" width="360" height="4"/>
+          <g fill="#ffc81e" opacity=".5"><rect x="14" y="352" width="26" height="4"/><rect x="66" y="352" width="26" height="4"/><rect x="118" y="352" width="26" height="4"/><rect x="170" y="352" width="26" height="4"/></g>
+          <!-- cancela -->
+          <g>
+            <rect class="c-post" x="241" y="280" width="12" height="52" rx="2"/>
+            <circle class="lamp" cx="247" cy="276" r="5"/>
+            <g class="barrier-arm">
+              <rect class="c-arm-w" x="168" y="282" width="79" height="9" rx="4"/>
+              <g class="c-arm"><rect x="176" y="282" width="10" height="9"/><rect x="196" y="282" width="10" height="9"/><rect x="216" y="282" width="10" height="9"/></g>
+            </g>
+          </g>
+          <!-- trabalhador -->
+          <g transform="translate(108 0)">
+            <g class="walker">
+              <ellipse cx="0" cy="334" rx="34" ry="5" fill="#000" opacity=".25"/>
+              <rect class="leg leg-l c-pants" x="-19" y="262" width="16" height="68" rx="6"/>
+              <rect class="leg leg-r c-pants" x="3" y="262" width="16" height="68" rx="6"/>
+              <g class="body-bob">
+                <g class="idle-breathe">
+                  <rect class="c-shirt" x="-42" y="212" width="13" height="56" rx="6.5"/>
+                  <rect class="c-shirt" x="29" y="212" width="13" height="56" rx="6.5"/>
+                  <circle class="c-skin" cx="-35.5" cy="271" r="7"/>
+                  <circle class="c-skin" cx="35.5" cy="271" r="7"/>
+                  <path class="c-shirt" d="M-30 216q0-9 11-10h38q11 1 11 10v52h-60z"/>
+                  <rect class="c-skin-2" x="-7" y="196" width="14" height="12"/>
+                  <circle class="c-skin" cx="0" cy="182" r="19"/>
+                  <path class="c-hair" d="M-18.5 179a18.5 18.5 0 0 1 37 0q-5-9-18.5-9t-18.5 9z"/>
+                  <circle cx="-6.5" cy="184" r="2" fill="#1d2a44"/><circle cx="6.5" cy="184" r="2" fill="#1d2a44"/>
+                  <path d="M-5 192q5 4 10 0" stroke="#1d2a44" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                  <!-- colete -->
+                  <g class="d-vest">
+                    <path class="c-vest" d="M-30 217q0-8 10-9.5l6-1.5 10 12v50h-26z"/>
+                    <path class="c-vest" d="M30 217q0-8-10-9.5l-6-1.5-10 12v50h26z"/>
+                    <rect class="c-reflect" x="-30" y="243" width="26" height="6"/><rect class="c-reflect" x="4" y="243" width="26" height="6"/>
+                    <rect class="c-reflect" x="-30" y="257" width="26" height="6"/><rect class="c-reflect" x="4" y="257" width="26" height="6"/>
+                    <rect class="c-reflect" x="-22" y="209" width="5" height="34"/><rect class="c-reflect" x="17" y="209" width="5" height="34"/>
+                  </g>
+                  <!-- capacete -->
+                  <g class="d-helmet">
+                    <path d="M-13 184q5 18 13 18t13-18" fill="none" stroke="#1d2a44" stroke-width="2"/>
+                    <path class="c-helmet" d="M-21 178q0-22 21-22.5Q21 156 21 178z"/>
+                    <rect class="c-helmet-2" x="-2.2" y="156" width="4.4" height="22"/>
+                    <rect class="c-helmet" x="-26" y="175" width="52" height="7" rx="3.5"/>
+                  </g>
+                </g>
+              </g>
+              <!-- caixas de detecção, como na tela do MIRA -->
+              <g class="dbox box-person">
+                <rect class="b" x="-50" y="146" width="100" height="190" stroke="#a9b6cc"/>
+                <rect x="-50" y="134" width="64" height="13" fill="#a9b6cc"/><text class="tag" x="-46" y="144" fill="#021849">pessoa 98%</text>
+              </g>
+              <g class="dbox box-cap">
+                <rect class="b" x="-30" y="150" width="60" height="36" stroke="#3cb44b"/>
+                <rect x="30" y="150" width="76" height="13" fill="#3cb44b"/><text class="tag" x="34" y="160" fill="#ffffff">capacete 96%</text>
+              </g>
+              <g class="dbox box-vest">
+                <rect class="b" x="-33" y="205" width="66" height="66" stroke="#3cb44b"/>
+                <rect x="33" y="205" width="68" height="13" fill="#3cb44b"/><text class="tag" x="37" y="215" fill="#ffffff">colete 93%</text>
+              </g>
+            </g>
+          </g>
+        </svg>
+        <div class="hud"><span class="rec"><i></i>CAM 01 · ENTRADA DA OBRA</span><span id="hudFoto">FOTO 0/2</span></div>
+        <div class="hud-b">OpenVINO · 20 ms</div>
+        <div class="flash"></div>
+        <div class="stage-bubble" id="stageBubble" hidden><span class="mini-av"><svg aria-hidden="true"><use href="#mira-av"/></svg></span><span><b>MIRA</b><span id="stageText"></span></span></div>
+      </div>
+      <div class="status-bar" id="demoStatus" data-state="idle" role="status"><span>AGUARDANDO</span></div>
+    </div>
+    <div class="demo-ctrl">
+      <button class="btn grow" type="button" id="demoPlay"><svg aria-hidden="true"><use href="#i-pause"/></svg><span>Pausar</span></button>
+      <button class="btn" type="button" id="demoRestart"><svg aria-hidden="true"><use href="#i-redo"/></svg>Do início</button>
+    </div>
+    <ol class="steps" id="demoSteps">
+      <li><span><strong>Chega à entrada da obra</strong><span>A cancela está fechada. A MIRA pede a primeira foto.</span></span></li>
+      <li><span><strong>Põe o capacete</strong><span>Na cabeça, aba para a frente, jugular presa no queixo.</span></span></li>
+      <li><span><strong>Foto 1: capacete validado</strong><span>A MIRA acha a pessoa e confirma o capacete.</span></span></li>
+      <li><span><strong>Veste o colete</strong><span>Por cima da roupa, fechado, faixas refletivas à mostra.</span></span></li>
+      <li><span><strong>Foto 2: capacete e colete</strong><span>Os dois EPIs conferidos na mesma pessoa.</span></span></li>
+      <li><span><strong>CONFORME</strong><span>A cancela abre e o passe de obra é liberado.</span></span></li>
+      <li><span><strong>Bom trabalho!</strong><span>O trabalhador entra na obra com segurança.</span></span></li>
+    </ol>
+    <section class="sec" aria-labelledby="h-gal">
+      <div class="sec-h"><span class="badge"><svg aria-hidden="true"><use href="#i-photo"/></svg></span><div><h3 id="h-gal">A IA em fotos reais</h3><small>Caixas desenhadas pelo modelo mira_ppe</small></div></div>
+      <div class="gal" tabindex="0" aria-label="Fotos reais analisadas pela MIRA (arraste para o lado)">
+        <figure class="ok"><div class="ph"><img src="img/conforme-ia.jpg" alt="Trabalhador com capacete branco e colete laranja; a IA marca capacete 87% e colete 89%" style="object-position:50% 25%" loading="lazy"><span class="res">CONFORME</span></div>
+          <figcaption><b>Capacete e colete na mesma pessoa</b><span>capacete 87% · colete 89% · pessoa 91%</span></figcaption></figure>
+        <figure class="ok"><div class="ph"><img src="img/equipe-ia.jpg" alt="Duas trabalhadoras com capacete e colete amarelo; todas as caixas verdes" loading="lazy"><span class="res">CONFORME</span></div>
+          <figcaption><b>Equipe inteira conferida</b><span>Cada pessoa é avaliada com os EPIs dentro da caixa dela.</span></figcaption></figure>
+        <figure class="no"><div class="ph"><img src="img/sem-colete-ia.jpg" alt="Trabalhador de capacete, sem colete; a IA marca SEM colete 83%" style="object-position:50% 25%" loading="lazy"><span class="res">NÃO CONFORME</span></div>
+          <figcaption><b>Capacete sim, colete não</b><span>A IA marca "SEM colete" e bloqueia a entrada.</span></figcaption></figure>
+        <figure class="no"><div class="ph"><img src="img/sem-capacete-ia.jpg" alt="Dois operários ao lado de placa Safety First; um sem capacete, marcado SEM capacete 82%" style="object-position:20% 50%" loading="lazy"><span class="res">NÃO CONFORME</span></div>
+          <figcaption><b>Cabeça sem capacete</b><span>"SEM capacete 82%" ao lado da placa de segurança.</span></figcaption></figure>
+        <figure class="ok"><div class="ph"><img src="img/tunel-ia.jpg" alt="Dois trabalhadores num túnel com capacete e jaqueta refletiva; caixas verdes" loading="lazy"><span class="res">CONFORME</span></div>
+          <figcaption><b>Túnel, pouca luz</b><span>Capacete 89% e colete 86% mesmo no subsolo.</span></figcaption></figure>
+      </div>
+    </section>
+    <div class="cta-card">
+      <h3>Agora é a sua vez</h3>
+      <p>Tem capacete e colete no estande? Faça a inspeção pelo chat e ganhe seu passe de obra.</p>
+      <a class="btn yel" href="#chat">Fazer a inspeção no chat</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MANUAL ================= -->
+<section class="screen" data-screen="manual" aria-label="Manual do EPI" hidden>
+  <header class="page-head">
+    <a class="icon-btn" href="#inicio" aria-label="Voltar ao início"><svg aria-hidden="true"><use href="#i-back"/></svg></a>
+    <h2>Manual do EPI</h2><span class="pill">NR-6</span>
+  </header>
+  <div class="page-scroll">
+    <p class="lede">Como usar o capacete e o colete do jeito que a MIRA reconhece, e como tirar a foto para a validação dar certo na primeira tentativa. Todas as fotos abaixo são reais e as caixas foram desenhadas pelo próprio modelo do MIRA.</p>
+
+    <section class="sec" aria-labelledby="h-fluxo">
+      <div class="sec-h"><span class="badge"><svg aria-hidden="true"><use href="#i-chip"/></svg></span><div><h3 id="h-fluxo">Como a MIRA valida</h3><small>4 passos no chat</small></div></div>
+      <ol class="flow">
+        <li><strong>Seu nome</strong><span>Você se identifica na conversa.</span></li>
+        <li><strong>Foto com capacete</strong><span>A MIRA acha a pessoa e confere o capacete na cabeça.</span></li>
+        <li><strong>Foto com capacete e colete</strong><span>Os dois EPIs, na mesma pessoa e na mesma foto.</span></li>
+        <li><strong>Passe de obra</strong><span>Tudo certo: CONFORME. Faltou algo: NÃO CONFORME, e ela diz o quê.</span></li>
+      </ol>
+    </section>
+
+    <section class="sec" aria-labelledby="h-cap">
+      <div class="sec-h"><span class="badge"><svg aria-hidden="true"><use href="#i-helmet"/></svg></span><div><h3 id="h-cap">Capacete</h3><small>ABNT NBR 8221</small></div></div>
+      <div class="figs two">
+        <figure class="fig good">
+          <div class="ph"><img src="img/conforme-ia.jpg" alt="Trabalhador com capacete na cabeça; a IA marca capacete 87%" style="object-position:50% 15%" loading="lazy"><span class="res">CONFORME</span></div>
+          <figcaption><span class="mk"><svg><use href="#i-check"/></svg></span><span>Na cabeça, aba para a frente<small>capacete 87%</small></span></figcaption>
+        </figure>
+        <figure class="fig bad">
+          <div class="ph"><img src="img/sem-capacete-ia.jpg" alt="Operário sem capacete ao lado de um colega com capacete azul; a IA marca SEM capacete 82%" style="object-position:12% 50%" loading="lazy"><span class="res">NÃO CONFORME</span></div>
+          <figcaption><span class="mk"><svg><use href="#i-x"/></svg></span><span>Cabeça descoberta<small>SEM capacete 82%</small></span></figcaption>
+        </figure>
+      </div>
+      <ul class="rules">
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Sempre na cabeça. Nunca na mão ou pendurado no braço.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Aba voltada para a frente.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Jugular (a fita do queixo) presa e ajustada.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Nada por baixo: sem boné nem capuz.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Casco sem trinca e com CA (Certificado de Aprovação) válido.</span></li>
+      </ul>
+    </section>
+
+    <section class="sec" aria-labelledby="h-col">
+      <div class="sec-h"><span class="badge"><svg aria-hidden="true"><use href="#i-vest"/></svg></span><div><h3 id="h-col">Colete refletivo</h3><small>ABNT NBR 15292</small></div></div>
+      <div class="figs two">
+        <figure class="fig good">
+          <div class="ph"><img src="img/colete-ok-ia.jpg" alt="Trabalhador com colete laranja fechado e faixas refletivas; a IA marca colete 76%" style="object-position:38% 40%" loading="lazy"><span class="res">CONFORME</span></div>
+          <figcaption><span class="mk"><svg><use href="#i-check"/></svg></span><span>Por cima da roupa, faixas à mostra<small>colete 76% · capacete 89%</small></span></figcaption>
+        </figure>
+        <figure class="fig bad">
+          <div class="ph"><img src="img/sem-colete-ia.jpg" alt="Trabalhador de capacete e camisa preta, sem colete; a IA marca SEM colete 83%" style="object-position:50% 30%" loading="lazy"><span class="res">NÃO CONFORME</span></div>
+          <figcaption><span class="mk"><svg><use href="#i-x"/></svg></span><span>Só a camisa, sem colete<small>SEM colete 83%</small></span></figcaption>
+        </figure>
+      </div>
+      <ul class="rules">
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Por cima de toda a roupa, inclusive de jaqueta e capa de chuva.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Fechado na frente.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Faixas refletivas limpas e visíveis na frente e nas costas.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Tamanho certo: nem apertado, nem sobrando.</span></li>
+      </ul>
+    </section>
+
+    <section class="sec" aria-labelledby="h-foto">
+      <div class="sec-h"><span class="badge"><svg aria-hidden="true"><use href="#i-photo"/></svg></span><div><h3 id="h-foto">A foto para a IA</h3><small>O formato que a MIRA lê melhor</small></div></div>
+      <div class="figs four">
+        <figure class="fig good">
+          <div class="ph"><img src="img/foto-certa-ia.jpg" alt="Foto de frente, da cintura para cima, com capacete e colete detectados" style="object-position:50% 20%" loading="lazy"><span class="res">CONFORME</span></div>
+          <figcaption><span class="mk"><svg><use href="#i-check"/></svg></span><span>De frente, da cintura para cima<small>pessoa 91% · capacete 87% · colete 89%</small></span></figcaption>
+        </figure>
+        <figure class="fig bad">
+          <div class="ph"><img src="img/foto-contraluz-ia.jpg" alt="A mesma foto com sol forte atrás; o capacete some no brilho e não é detectado" style="object-position:50% 20%" loading="lazy"><span class="res">NÃO CONFORME</span></div>
+          <figcaption><span class="mk"><svg><use href="#i-x"/></svg></span><span>Contraluz<small>o capacete sumiu no brilho</small></span></figcaption>
+        </figure>
+        <figure class="fig bad">
+          <div class="ph"><img src="img/foto-longe-ia.jpg" alt="A pessoa aparece muito pequena diante de um prédio em obra; nada é detectado" style="object-position:50% 85%" loading="lazy"><span class="res">NÃO CONFORME</span></div>
+          <figcaption><span class="mk"><svg><use href="#i-x"/></svg></span><span>Longe demais<small>a IA não achou ninguém</small></span></figcaption>
+        </figure>
+        <figure class="fig bad">
+          <div class="ph"><img src="img/foto-cortada-ia.jpg" alt="Foto cortada na altura do rosto; o capacete ficou de fora" style="object-position:50% 0%" loading="lazy"><span class="res">NÃO CONFORME</span></div>
+          <figcaption><span class="mk"><svg><use href="#i-x"/></svg></span><span>Capacete fora da foto<small>só o colete foi visto</small></span></figcaption>
+        </figure>
+      </div>
+      <ul class="rules">
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>De frente, da cintura para cima: capacete e colete inteiros na imagem.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Luz no seu rosto. Evite janela, sol ou refletor atrás de você.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Uma pessoa por foto.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Celular na altura do peito, a cerca de 1,5 m. Peça para alguém tirar, ou estique o braço.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Sem filtro e sem foto de tela.</span></li>
+      </ul>
+    </section>
+
+    <section class="sec" aria-labelledby="h-ia">
+      <div class="sec-h"><span class="badge"><svg aria-hidden="true"><use href="#i-chip"/></svg></span><div><h3 id="h-ia">O que a IA enxerga</h3><small>Classes do modelo mira_ppe</small></div></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Na imagem</th><th>Classe</th><th>Resultado</th></tr></thead>
+          <tbody>
+            <tr><td>Pessoa</td><td><code>pessoa</code></td><td>quem será verificado</td></tr>
+            <tr><td>Capacete na cabeça</td><td><code>capacete</code></td><td><span class="g">EPI presente</span></td></tr>
+            <tr><td>Cabeça sem capacete</td><td><code>SEM capacete</code></td><td><span class="r">falta capacete</span></td></tr>
+            <tr><td>Colete vestido</td><td><code>colete</code></td><td><span class="g">EPI presente</span></td></tr>
+            <tr><td>Tronco sem colete</td><td><code>SEM colete</code></td><td><span class="r">falta colete</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Um EPI conta como faltando quando ele não aparece, ou quando a IA vê "SEM capacete" ou "SEM colete" dentro da pessoa. Luvas, óculos e cinturão de segurança têm modelos próprios e podem ser cobrados em câmeras específicas, como as de trabalho em altura.</p>
+      <p class="note">No canteiro, o MIRA roda no próprio computador da obra, sem internet, em cerca de 20 ms por imagem. Neste site, o mesmo modelo roda no navegador do seu celular. Funciona com webcam, câmera de segurança e drone. Cada verificação vai para uma planilha, e as não conformidades ficam com foto.</p>
+    </section>
+
+    <section class="sec" aria-labelledby="h-norma">
+      <div class="sec-h"><span class="badge"><svg aria-hidden="true"><use href="#i-book"/></svg></span><div><h3 id="h-norma">Normas de referência</h3><small>Brasil</small></div></div>
+      <div class="norms">
+        <div class="norm"><b>NR-6</b><span>EPI com CA válido, fornecido pela empresa e de uso obrigatório.</span></div>
+        <div class="norm"><b>NR-18</b><span>Segurança e saúde no trabalho na indústria da construção.</span></div>
+        <div class="norm"><b>NBR 8221</b><span>Capacete de segurança para uso na indústria.</span></div>
+        <div class="norm"><b>NBR 15292</b><span>Vestimenta de segurança de alta visibilidade.</span></div>
+      </div>
+    </section>
+
+    <div class="cta-card">
+      <h3>Pronto para a inspeção?</h3>
+      <p>Coloque o capacete e o colete e mande as fotos para a MIRA.</p>
+      <a class="btn yel" href="#chat">Fazer a inspeção no chat</a>
+    </div>
+    <section class="sec" aria-labelledby="h-cred">
+      <div class="sec-h"><div><h3 id="h-cred" style="font-size:19px">Créditos das fotos</h3><small>Licença CC BY 2.0 · caixas de detecção adicionadas pelo MIRA</small></div></div>
+      <ul class="credits">
+        <li>"Salem RR Depot - April 2014", OregonDOT · <a href="https://www.flickr.com/photos/28364885@N02/13972389965" target="_blank" rel="noopener">fonte</a>. Também usada nos exemplos de contraluz, distância e recorte (editada).</li>
+        <li>"Installing solar panels", OregonDOT · <a href="https://www.flickr.com/photos/28364885@N02/3077176261" target="_blank" rel="noopener">fonte</a></li>
+        <li>"24.MenWork.9F10.WDC.26sep05" e "21.MenWork.9F10.WDC.26sep05", Elvert Barnes · <a href="https://www.flickr.com/photos/95413346@N00/50843644" target="_blank" rel="noopener">fonte 1</a>, <a href="https://www.flickr.com/photos/95413346@N00/50835653" target="_blank" rel="noopener">fonte 2</a></li>
+        <li>"construction workers (2)", Paul Keller · <a href="https://www.flickr.com/photos/18259771@N00/307442102" target="_blank" rel="noopener">fonte</a></li>
+        <li>"Geeta Nanda", Thames Valley Housing · <a href="https://www.flickr.com/photos/75513917@N03/9041281555" target="_blank" rel="noopener">fonte</a></li>
+        <li>"Geoff and Matt", Matt From London · <a href="https://www.flickr.com/photos/57868312@N00/16852075938" target="_blank" rel="noopener">fonte</a></li>
+        <li>"Construction workers in Hong Kong", JoopDorresteijn · <a href="https://www.flickr.com/photos/10073573@N00/3355801449" target="_blank" rel="noopener">fonte</a> (fundo do exemplo "longe demais")</li>
+        <li>Licença: <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>. Modelo de detecção treinado com o dataset Construction Site Safety (Roboflow, CC BY 4.0).</li>
+      </ul>
+    </section>
+  </div>
+</section>
+</div>
+
+<script src="ort/ort.wasm.min.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const icon = (id, cls) => `<svg${cls ? ` class="${cls}"` : ''} aria-hidden="true"><use href="#${id}"/></svg>`;
+const TICKS = '<svg viewBox="0 0 18 11" aria-hidden="true"><path d="M1 6l3.2 3.2L11 2M7 9.2L14.5 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* ---------------- navegação por hash ---------------- */
+const SCREENS = ['inicio', 'chat', 'demo', 'manual'];
+let current = null;
+function route() {
+  let name = (location.hash || '').slice(1);
+  if (!SCREENS.includes(name)) name = 'inicio';
+  if (name === current) return;
+  document.querySelectorAll('.screen').forEach(s => {
+    const on = s.dataset.screen === name;
+    if (on) {
+      s.hidden = false;
+      s.classList.remove('entering'); void s.offsetWidth; s.classList.add('entering');
+    } else s.hidden = true;
+  });
+  current = name;
+  closeMenu();
+  homeFx.toggle(name === 'inicio');
+  demo.toggle(name === 'demo');
+  if (name === 'chat') startChat();
+  const sc = document.querySelector(`.screen[data-screen="${name}"] .page-scroll`);
+  if (sc) sc.scrollTop = 0;
+}
+
+/* ---------------- fundo do início: fotos reais + varredura ---------------- */
+const homeFx = (() => {
+  const cv = $('#homeFx'), ctx = cv.getContext('2d');
+  const fotos = [...document.querySelectorAll('#homePhotos img')];
+  let raf = 0, on = false, W = 0, H = 0, t0 = 0, slide = 0, timer = 0;
+  function size() {
+    const r = cv.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+    W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function frame(t) {
+    if (!t0) t0 = t;
+    ctx.clearRect(0, 0, W, H);
+    const y = ((t - t0) / 4200 % 1) * (H * .75 + 120) - 60;
+    const g = ctx.createLinearGradient(0, y - 70, 0, y);
+    g.addColorStop(0, 'rgba(255,200,30,0)'); g.addColorStop(1, 'rgba(255,200,30,.2)');
+    ctx.fillStyle = g; ctx.fillRect(0, y - 70, W, 70);
+    ctx.fillStyle = 'rgba(255,200,30,.6)'; ctx.fillRect(0, y, W, 1.5);
+    if (on) raf = requestAnimationFrame(frame);
+  }
+  function proxima() {
+    fotos[slide].classList.remove('on');
+    slide = (slide + 1) % fotos.length;
+    const im = fotos[slide]; im.classList.remove('on'); void im.offsetWidth; im.classList.add('on');
+  }
+  addEventListener('resize', () => { if (on) size(); });
+  return {
+    toggle(v) {
+      if (v === on) return; on = v;
+      clearInterval(timer);
+      if (on) {
+        size();
+        if (REDUCE) { on = false; return; }
+        raf = requestAnimationFrame(frame);
+        timer = setInterval(proxima, 6000);
+      } else cancelAnimationFrame(raf);
+    }
+  };
+})();
+
+/* ---------------- IA: modelo mira_ppe rodando no navegador ---------------- */
+const NOMES = ['capacete', 'SEM capacete', 'colete', 'SEM colete', 'pessoa'];
+const CORES = ['#3cb44b', '#dc2828', '#3cb44b', '#dc2828', '#a0a0a0'];
+const CONF = 0.35, IOU = 0.5, LADO = 640;
+const IA = { state: 'idle', progress: 0, session: null, promise: null, ouvintes: new Set() };
+function avisarIA() { IA.ouvintes.forEach(f => { try { f(IA); } catch (_) { } }); }
+function carregarIA() {
+  if (IA.promise) return IA.promise;
+  IA.state = 'loading'; avisarIA();
+  IA.promise = (async () => {
+    if (!window.ort) throw new Error('onnxruntime não carregou');
+    ort.env.wasm.wasmPaths = new URL('ort/', location.href).href;
+    ort.env.wasm.numThreads = 1;
+    const resp = await fetch('mira_ppe.onnx');
+    if (!resp.ok) throw new Error('modelo ' + resp.status);
+    let buf;
+    const total = +resp.headers.get('content-length') || 9796679;
+    if (resp.body && resp.body.getReader) {
+      const rd = resp.body.getReader(), partes = []; let n = 0;
+      for (;;) {
+        const { done, value } = await rd.read(); if (done) break;
+        partes.push(value); n += value.length; IA.progress = Math.min(.95, n / total * .95); avisarIA();
+      }
+      buf = new Uint8Array(n); let o = 0; for (const p of partes) { buf.set(p, o); o += p.length; }
+    } else buf = new Uint8Array(await resp.arrayBuffer());
+    IA.session = await ort.InferenceSession.create(buf, { executionProviders: ['wasm'], graphOptimizationLevel: 'all' });
+    IA.state = 'ready'; IA.progress = 1; avisarIA();
+    return IA.session;
+  })().catch(e => { console.error(e); IA.state = 'error'; avisarIA(); throw e; });
+  return IA.promise;
+}
+const area = b => (b[2] - b[0]) * (b[3] - b[1]);
+function iou(a, b) {
+  const w = Math.max(0, Math.min(a[2], b[2]) - Math.max(a[0], b[0])), h = Math.max(0, Math.min(a[3], b[3]) - Math.max(a[1], b[1]));
+  const i = w * h, u = area(a) + area(b) - i; return u > 0 ? i / u : 0;
+}
+// letterbox 640 (cinza 114), saída [1, 4+classes, 8400], NMS por classe
+async function detectar(img) {
+  const w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+  const r = Math.min(LADO / w, LADO / h), nw = Math.round(w * r), nh = Math.round(h * r);
+  const dx = Math.floor((LADO - nw) / 2), dy = Math.floor((LADO - nh) / 2);
+  const c = document.createElement('canvas'); c.width = c.height = LADO;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  g.fillStyle = 'rgb(114,114,114)'; g.fillRect(0, 0, LADO, LADO); g.drawImage(img, dx, dy, nw, nh);
+  const px = g.getImageData(0, 0, LADO, LADO).data, N = LADO * LADO, f = new Float32Array(3 * N);
+  for (let i = 0, j = 0; i < N; i++, j += 4) { f[i] = px[j] / 255; f[N + i] = px[j + 1] / 255; f[2 * N + i] = px[j + 2] / 255; }
+  const t0 = performance.now();
+  const saida = await IA.session.run({ [IA.session.inputNames[0]]: new ort.Tensor('float32', f, [1, 3, LADO, LADO]) });
+  const ms = Math.round(performance.now() - t0);
+  const o = saida[IA.session.outputNames[0]], [, C, A] = o.dims, d = o.data, nc = C - 4;
+  const cand = [];
+  for (let a = 0; a < A; a++) {
+    let k = 0, p = d[4 * A + a];
+    for (let c2 = 1; c2 < nc; c2++) { const v = d[(4 + c2) * A + a]; if (v > p) { p = v; k = c2; } }
+    if (p < CONF) continue;
+    const cx = d[a], cy = d[A + a], bw = d[2 * A + a], bh = d[3 * A + a];
+    const b = [(cx - bw / 2 - dx) / r, (cy - bh / 2 - dy) / r, (cx + bw / 2 - dx) / r, (cy + bh / 2 - dy) / r];
+    b[0] = Math.max(0, Math.min(w, b[0])); b[2] = Math.max(0, Math.min(w, b[2])); b[1] = Math.max(0, Math.min(h, b[1])); b[3] = Math.max(0, Math.min(h, b[3]));
+    cand.push({ k, p, b });
+  }
+  cand.sort((x, y) => y.p - x.p);
+  const dets = [];
+  for (const c3 of cand) if (!dets.some(q => q.k === c3.k && iou(q.b, c3.b) > IOU)) dets.push(c3);
+  return { dets, ms };
+}
+// mesma regra do avaliar_frame do mira_webcam.py, olhando a pessoa principal (a maior)
+function avaliar(dets, exig) {
+  const pessoas = dets.filter(x => x.k === 4), epis = dets.filter(x => x.k !== 4);
+  let pessoa = null;
+  if (!pessoas.length) { if (!epis.length) return { status: 'SEM_PESSOA', falta: exig.slice(), pessoa: null, best: {} }; }
+  else pessoa = pessoas.reduce((a, b) => area(b.b) > area(a.b) ? b : a);
+  const cx = pessoa && pessoa.b;
+  const dentro = b => {
+    if (!cx) return true;
+    const x = (b[0] + b[2]) / 2, y = (b[1] + b[3]) / 2, w = cx[2] - cx[0], h = cx[3] - cx[1];
+    return x >= cx[0] - .1 * w && x <= cx[2] + .1 * w && y >= cx[1] - .1 * h && y <= cx[3] + .1 * h;
+  };
+  const best = {};
+  for (const e of epis) if (dentro(e.b) && (!best[e.k] || e.p > best[e.k].p)) best[e.k] = e;
+  const falta = [];
+  if (exig.includes('capacete') && (!best[0] || best[1])) falta.push('capacete');
+  if (exig.includes('colete') && (!best[2] || best[3])) falta.push('colete');
+  return { status: falta.length ? 'NAO_CONFORME' : 'CONFORME', falta, pessoa, best };
+}
+// desenha as caixas como na tela do MIRA
+function anotar(img, dets) {
+  const w = img.naturalWidth, h = img.naturalHeight, c = document.createElement('canvas');
+  c.width = w; c.height = h; const g = c.getContext('2d'); g.drawImage(img, 0, 0);
+  const esp = Math.max(3, Math.round(w / 200)), fs = Math.max(14, Math.round(w / 34));
+  g.font = `700 ${fs}px "JetBrains Mono", Consolas, monospace`; g.textBaseline = 'middle';
+  const ordem = dets.slice().sort((a, b) => (b.k === 4) - (a.k === 4));
+  for (const { k, p, b } of ordem) {
+    g.strokeStyle = CORES[k]; g.lineWidth = esp; g.strokeRect(b[0], b[1], b[2] - b[0], b[3] - b[1]);
+    const t = `${NOMES[k]} ${Math.round(p * 100)}%`, tw = g.measureText(t).width + fs * .7, th = fs * 1.45, y = Math.max(b[1], th);
+    g.fillStyle = CORES[k]; g.fillRect(b[0] - esp / 2, y - th, tw, th);
+    g.fillStyle = '#ffffff'; g.fillText(t, b[0] + fs * .35, y - th / 2);
+  }
+  try { return c.toDataURL('image/jpeg', .86); } catch (_) { return null; }
+}
+
+/* ---------------- chat ---------------- */
+const msgs = $('#msgs'), scroller = $('#chatScroll'), statusEl = $('#chatStatus');
+const form = $('#chatForm'), text = $('#chatText'), camBtn = $('#camBtn'), fotoIn = $('#foto');
+const inputBar = $('#chatInput'), eventBar = $('#eventBar');
+const ABORT = { abort: true };
+const EXEMPLOS = {
+  capacete: { src: 'img/capacete.jpg', sim: { capacete: true, colete: false } },
+  conforme: { src: 'img/conforme.jpg', sim: { capacete: true, colete: true } },
+  'sem-capacete': { src: 'img/sem-capacete.jpg', sim: { capacete: false, colete: false } },
+  'sem-colete': { src: 'img/sem-colete.jpg', sim: { capacete: true, colete: false } },
+};
+let sess = 0, state = 'nome', busy = false, started = false, nome = '', nomeCompleto = '', avisouModoDemo = false;
+
+const hora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+const scrollDown = () => requestAnimationFrame(() => scroller.scrollTo({ top: scroller.scrollHeight, behavior: REDUCE ? 'auto' : 'smooth' }));
+async function pause(ms) { const my = sess; await wait(ms); if (my !== sess) throw ABORT; }
+async function guard(promise) { const my = sess; const v = await promise; if (my !== sess) throw ABORT; return v; }
+const run = fn => fn().catch(e => { if (e !== ABORT) console.error(e); });
+
+function fmt(str) {
+  const frag = document.createDocumentFragment();
+  str.split('**').forEach((part, i) => {
+    if (!part) return;
+    if (i % 2) { const b = document.createElement('strong'); b.textContent = part; frag.appendChild(b); }
+    else frag.appendChild(document.createTextNode(part));
+  });
+  return frag;
+}
+function row(side, cls = '') {
+  const r = document.createElement('div'); r.className = `row ${side} ${cls}`.trim();
+  const b = document.createElement('div'); b.className = 'bubble';
+  r.appendChild(b); msgs.appendChild(r);
+  return { r, b };
+}
+function meta(b, out) {
+  const m = document.createElement('span'); m.className = 'meta'; m.textContent = hora();
+  if (out) { const t = document.createElement('span'); t.className = 'ticks'; t.innerHTML = TICKS; m.appendChild(t); setTimeout(() => m.classList.add('read'), 900); }
+  b.appendChild(m); return m;
+}
+function sys(str, cls = 'sys') { const d = document.createElement('div'); d.className = cls; d.textContent = str; msgs.appendChild(d); return d; }
+let digitando = false;
+function setStatus(s) { statusEl.textContent = s; statusEl.classList.toggle('typing', s !== 'online'); }
+function statusOcioso() {
+  if (digitando) return;
+  if (IA.state === 'loading') setStatus(`carregando a IA… ${Math.round(IA.progress * 100)}%`);
+  else setStatus('online');
+}
+IA.ouvintes.add(statusOcioso);
+async function typing(ms) {
+  digitando = true; setStatus('digitando…');
+  const { r, b } = row('in'); b.innerHTML = '<span class="typing-dots"><i></i><i></i><i></i></span>'; scrollDown();
+  try { await pause(ms); } finally { r.remove(); digitando = false; statusOcioso(); }
+}
+async function bot(str, { delay = 900, buttons } = {}) {
+  await typing(delay);
+  const { r, b } = row('in'); b.appendChild(fmt(str)); meta(b);
+  if (buttons) r.appendChild(qbuttons(buttons));
+  scrollDown(); return b;
+}
+function qbuttons(list) {
+  const box = document.createElement('div'); box.className = 'qbtns';
+  for (const it of list) {
+    let el;
+    if (it.foto) {
+      el = document.createElement('label'); el.htmlFor = 'foto'; el.className = 'qbtn main foto'; el.setAttribute('role', 'button'); el.tabIndex = 0;
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fotoIn.click(); } });
+    } else if (it.exemplo) {
+      el = document.createElement('button'); el.type = 'button'; el.className = 'qbtn foto';
+      el.addEventListener('click', () => enviarExemplo(it.exemplo));
+    } else { el = document.createElement('a'); el.href = it.href; el.className = 'qbtn'; }
+    el.innerHTML = icon(it.icon || (it.foto ? 'i-cam' : 'i-arrow'));
+    el.appendChild(document.createTextNode(it.label));
+    box.appendChild(el);
+  }
+  return box;
+}
+function user(str) { const { b } = row('out'); b.appendChild(document.createTextNode(str)); meta(b, true); scrollDown(); }
+function userPhoto(url, exemplo) {
+  const { b } = row('out'); b.classList.add('photo-bubble');
+  const img = new Image(); img.alt = exemplo ? 'Foto de exemplo enviada' : 'Foto enviada'; img.src = url; img.onload = scrollDown; b.appendChild(img);
+  if (exemplo) { const t = document.createElement('span'); t.className = 'ex-tag'; t.textContent = 'FOTO DE EXEMPLO'; b.appendChild(t); }
+  meta(b, true); scrollDown();
+}
+function setInput(mode) {
+  const photo = mode === 'foto';
+  inputBar.hidden = mode === 'fim'; eventBar.hidden = mode !== 'fim';
+  text.disabled = mode === 'wait';
+  form.querySelector('.send-btn').disabled = mode === 'wait';
+  camBtn.classList.toggle('disabled', !photo);
+  camBtn.classList.toggle('attn', photo);
+  text.placeholder = mode === 'nome' ? 'Digite seu nome' : photo ? 'Toque na câmera e mande a foto' : 'Aguarde a MIRA…';
+  document.querySelectorAll('.qbtns').forEach(q => q.classList.toggle('off', !photo));
+  document.querySelectorAll('[data-exemplo]').forEach(b => b.setAttribute('aria-disabled', String(!photo)));
+}
+const titleCase = s => s.toLowerCase().split(/\s+/).map((w, i) => i && /^(da|de|do|das|dos|e)$/.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+const pct = p => `${Math.round(p * 100)}%`;
+
+function startChat() {
+  if (started) return;
+  started = true; const my = ++sess; busy = true; state = 'intro';
+  msgs.innerHTML = ''; setInput('wait');
+  sys('HOJE', 'day');
+  sys('MIRA no INOVA NACIONAL 2026. As fotos são analisadas pela IA aqui no seu aparelho e não são enviadas para nenhum servidor.');
+  carregarIA().catch(() => { });
+  run(async () => {
+    await bot('Olá! 👋 Eu sou a **MIRA**, a IA de inspeção de EPI.', { delay: 700 });
+    await bot('Na obra, ninguém entra sem capacete e colete. Eu confiro pela foto e libero a entrada em segundos.', { delay: 1300 });
+    await bot('Para começar, qual é o seu **nome**?', { delay: 900 });
+    if (my !== sess) return;
+    state = 'nome'; busy = false; setInput('nome');
+    if (matchMedia('(pointer:fine)').matches) text.focus();
+  });
+}
+function resetChat() { sess++; started = false; busy = false; digitando = false; statusOcioso(); eventBar.hidden = true; startChat(); }
+
+const BOTOES_ETAPA1 = [
+  { foto: true, label: 'Tirar ou escolher a foto' },
+  { exemplo: 'capacete', label: 'Estou sem EPI: usar foto de exemplo', icon: 'i-photo' },
+  { href: '#manual', label: 'Como tirar a foto certa', icon: 'i-book' },
+];
+const BOTOES_ETAPA2 = [
+  { foto: true, label: 'Tirar ou escolher a foto' },
+  { exemplo: 'conforme', label: 'Estou sem EPI: usar foto de exemplo', icon: 'i-photo' },
+  { href: '#demo', label: 'Ver demonstração', icon: 'i-film' },
+];
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const v = text.value.replace(/\*/g, '').trim();
+  if (!v || busy) return;
+  text.value = '';
+  if (state === 'nome') {
+    user(v); busy = true; setInput('wait');
+    run(async () => {
+      if (v.length < 2 || !/\p{L}/u.test(v)) {
+        await bot('Pode me dizer seu nome? Só o primeiro já serve.');
+        busy = false; setInput('nome'); return;
+      }
+      nomeCompleto = titleCase(v).slice(0, 40); nome = nomeCompleto.split(/\s+/)[0];
+      await bot(`Olá, **${nome}**! Bem-vindo ao **MIRA**. 👷`, { delay: 800 });
+      await bot('Vamos fazer nosso teste de simulação: são **2 fotos** rápidas e, no fim, você recebe o seu passe de obra.', { delay: 1300 });
+      await bot('**Etapa 1 de 2:** mande uma foto sua usando o **capacete**. 📸', { delay: 1100, buttons: BOTOES_ETAPA1 });
+      state = 'foto1'; busy = false; setInput('foto');
+    });
+  } else if (state === 'foto1' || state === 'foto2') {
+    user(v); busy = true; setInput('wait');
+    run(async () => {
+      await bot('Para esta etapa eu preciso de uma **foto**. Toque no ícone da câmera aqui embaixo. 📷');
+      busy = false; setInput('foto');
+    });
+  }
+});
+
+function lerImagem(src) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const max = 960, k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      if (src.startsWith('blob:')) URL.revokeObjectURL(src);
+      try { res(c.toDataURL('image/jpeg', .88)); } catch (e) { rej(e); }
+    };
+    img.onerror = () => { if (src.startsWith('blob:')) URL.revokeObjectURL(src); rej(new Error('imagem')); };
+    img.src = src;
+  });
+}
+const decodificar = url => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+
+fotoIn.addEventListener('change', () => {
+  const f = fotoIn.files && fotoIn.files[0];
+  fotoIn.value = '';
+  if (!f || busy || (state !== 'foto1' && state !== 'foto2')) return;
+  processar(URL.createObjectURL(f), null);
+});
+function enviarExemplo(chave) {
+  if (busy || (state !== 'foto1' && state !== 'foto2')) return;
+  processar(EXEMPLOS[chave].src, chave);
+}
+function processar(src, exemplo) {
+  busy = true; setInput('wait');
+  run(async () => {
+    let url;
+    try { url = await guard(lerImagem(src)); }
+    catch (e) {
+      if (e === ABORT) throw e;
+      await bot('Não consegui abrir essa imagem. Tente outra foto, em JPG ou PNG.'); busy = false; setInput('foto'); return;
+    }
+    userPhoto(url, exemplo);
+    await analisar(url, state, exemplo);
+  });
+}
+
+async function garantirIA() {
+  if (IA.state === 'ready') return true;
+  if (IA.state === 'error') return false;
+  const box = sys('', 'sys load');
+  box.innerHTML = '<span>Carregando a IA do MIRA no seu aparelho (só na primeira vez)…</span><span class="bar"><i></i></span>';
+  const barra = box.querySelector('.bar i');
+  const f = () => { barra.style.width = Math.round(IA.progress * 100) + '%'; };
+  IA.ouvintes.add(f); f(); scrollDown();
+  try { await guard(carregarIA()); return true; }
+  catch (e) { if (e === ABORT) throw e; return false; }
+  finally { IA.ouvintes.delete(f); box.remove(); }
+}
+
+async function analisar(url, etapa, exemplo) {
+  const exig = etapa === 'foto1' ? ['capacete'] : ['capacete', 'colete'];
+  let real = await garantirIA();
+  if (!real && !avisouModoDemo) { avisouModoDemo = true; sys('Não deu para carregar a IA neste aparelho. Seguindo em modo demonstração.'); }
+  await typing(600);
+  const { b } = row('in'); b.classList.add('analysis');
+  b.innerHTML = `<div class="scan"><img alt="Foto em análise"><div class="scan-grid"></div><div class="scan-line"></div>
+    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+    <span class="scan-tag">MIRA · ANALISANDO</span></div><ul class="checks"></ul><div class="verdict"></div>`;
+  const img = b.querySelector('img'); img.src = url; img.onload = scrollDown;
+  const list = b.querySelector('.checks'), tag = b.querySelector('.scan-tag');
+  digitando = true; setStatus('analisando a foto…'); scrollDown();
+
+  // resultado: real (modelo) ou demonstração
+  let ev, ms = 0, anotada = null;
+  try {
+    if (real) {
+      try {
+        const el = await guard(decodificar(url));
+        const [r] = await guard(Promise.all([detectar(el), pause(1100)]));
+        ms = r.ms; ev = avaliar(r.dets, exig); anotada = anotar(el, r.dets);
+      } catch (e) {
+        if (e === ABORT) throw e;
+        console.error(e); real = false; IA.state = 'error';
+      }
+    }
+    if (!real) {
+      await pause(1100);
+      const s = exemplo ? EXEMPLOS[exemplo].sim : { capacete: true, colete: true };
+      const best = {};
+      if (s.capacete) best[0] = { p: .9 }; else best[1] = { p: .82 };
+      if (s.colete) best[2] = { p: .88 }; else best[3] = { p: .8 };
+      const falta = exig.filter(e => !s[e]);
+      ev = { status: falta.length ? 'NAO_CONFORME' : 'CONFORME', falta, pessoa: { p: .93 }, best };
+    }
+    const itens = [['Pessoa na imagem', 'pessoa'], ['Capacete na cabeça', 'capacete']];
+    if (etapa === 'foto2') itens.push(['Colete refletivo', 'colete']);
+    for (const [label, key] of itens) {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="st"><svg class="i-yes"><use href="#i-check"/></svg><svg class="i-no"><use href="#i-x"/></svg></span><span></span><span class="val">…</span>`;
+      li.children[1].textContent = label; list.appendChild(li); scrollDown();
+      await pause(650);
+      let ok, val;
+      if (key === 'pessoa') {
+        ok = ev.status !== 'SEM_PESSOA';
+        val = ev.pessoa ? pct(ev.pessoa.p) : ok ? 'foto de perto' : 'não encontrada';
+      } else {
+        const [pos, neg] = key === 'capacete' ? [0, 1] : [2, 3];
+        ok = !ev.falta.includes(key);
+        val = ok ? pct(ev.best[pos].p) : ev.best[neg] ? `SEM ${key} ${pct(ev.best[neg].p)}` : 'não encontrado';
+      }
+      li.classList.add(ok ? 'yes' : 'no'); li.querySelector('.val').textContent = val;
+    }
+    await pause(300);
+  } finally { digitando = false; statusOcioso(); }
+
+  const passou = ev.status === 'CONFORME';
+  if (anotada) img.src = anotada;
+  b.classList.add('done', passou ? 'aprov' : 'reprov');
+  tag.textContent = real ? `MIRA · ${ms} ms NO SEU APARELHO` : (passou ? 'MIRA · VALIDADO' : 'MIRA · REPROVADO');
+  b.querySelector('.verdict').textContent = !passou ? 'NÃO CONFORME' : etapa === 'foto1' ? 'CAPACETE OK' : 'CONFORME';
+  meta(b); scrollDown();
+  buzz(passou ? [40] : [80, 60, 80]);
+
+  if (!passou) {
+    let msg;
+    if (ev.status === 'SEM_PESSOA') msg = 'Não encontrei ninguém na foto. Fique de frente, da cintura para cima, a cerca de 1,5 m da câmera, com luz no rosto.';
+    else if (ev.falta.length > 1) msg = 'Não encontrei o **capacete** nem o **colete**. Os dois precisam aparecer em você, na mesma foto.';
+    else if (ev.falta[0] === 'capacete') msg = ev.best[1] ? 'Vi uma **cabeça sem capacete**. Coloque o capacete com a aba para a frente e mande outra foto.' : 'Não encontrei o **capacete**. Confira: capacete na cabeça, aba para a frente e rosto visível. Mande outra foto.';
+    else msg = ev.best[3] ? 'Vi você **sem o colete**. Vista o colete por cima da roupa, fechado, com as faixas à mostra.' : 'Não encontrei o **colete**. Ele precisa estar fechado, por cima da roupa, com as faixas refletivas à mostra.';
+    await bot(msg, { delay: 1000, buttons: [{ foto: true, label: 'Mandar outra foto' }, { exemplo: etapa === 'foto1' ? 'capacete' : 'conforme', label: 'Usar foto de exemplo', icon: 'i-photo' }, { href: '#manual', label: 'Ver o manual do EPI', icon: 'i-book' }] });
+    busy = false; setInput('foto'); return;
+  }
+  if (etapa === 'foto1') {
+    await bot(`Capacete validado, **${nome}**! ✅`, { delay: 800 });
+    await bot('**Etapa 2 de 2:** agora mande uma foto usando o **capacete e o colete** juntos. 🦺', { delay: 1200, buttons: BOTOES_ETAPA2 });
+    state = 'foto2'; busy = false; setInput('foto');
+  } else {
+    await liberar();
+  }
+}
+
+async function liberar() {
+  state = 'fim';
+  await bot(`Tudo certo, **${nome}**! Capacete e colete conferidos. Você está **liberado para a obra**. 🏗️`, { delay: 1000 });
+  await typing(900);
+  const { b } = row('in', 'pass-row');
+  const id = 'MIRA-2026-' + String(Math.floor(1000 + Math.random() * 9000));
+  b.innerHTML = `<div class="pass" role="img"><div class="pass-stripe"></div><div class="pass-body">
+      <div class="pass-top"><span>Passe de obra</span><span>${id}</span></div>
+      <div class="pass-name"></div>
+      <div class="pass-status">${icon('i-badge')}CONFORME</div>
+      <ul class="pass-epis"><li>Capacete</li><li>Colete refletivo</li></ul>
+      <div class="pass-foot"><span>Entrada liberada · ${hora()}</span><span>INOVA NACIONAL 2026</span></div>
+    </div><div class="pass-sheen"></div></div>`;
+  b.querySelector('.pass-name').textContent = nomeCompleto;
+  b.querySelector('.pass').setAttribute('aria-label', `Passe de obra de ${nomeCompleto}: conforme, entrada liberada`);
+  scrollDown(); confetti(); buzz([60, 40, 120]);
+  await bot('Bom trabalho, e segurança em primeiro lugar. Pode seguir para a obra! 👷', { delay: 1400 });
+  await bot('Tenha uma boa imersão no evento do **INOVA NACIONAL 2026** e obrigado por visitar o **MIRA**! 💙', { delay: 1300 });
+  setInput('fim'); scrollDown();
+}
+
+function buzz(p) { try { navigator.vibrate && navigator.vibrate(p); } catch (_) { } }
+
+/* confete */
+function confetti() {
+  if (REDUCE) return;
+  const cv = $('#confetti'), ctx = cv.getContext('2d'), r = cv.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+  cv.width = r.width * dpr; cv.height = r.height * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const cols = ['#ffc81e', '#ff7a1a', '#3ee38a', '#ffffff', '#1b4796'];
+  const ps = Array.from({ length: 140 }, () => ({
+    x: r.width / 2 + (Math.random() - .5) * 80, y: r.height * .55,
+    vx: (Math.random() - .5) * 11, vy: -7 - Math.random() * 9, s: 5 + Math.random() * 6,
+    rot: Math.random() * 6, vr: (Math.random() - .5) * .4, c: cols[Math.floor(Math.random() * cols.length)]
+  }));
+  const t0 = performance.now();
+  (function f(t) {
+    const k = (t - t0) / 2600; ctx.clearRect(0, 0, r.width, r.height);
+    if (k >= 1) return;
+    for (const p of ps) {
+      p.vy += .32; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      ctx.save(); ctx.globalAlpha = 1 - Math.max(0, k - .7) / .3; ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
+    }
+    requestAnimationFrame(f);
+  })(t0);
+}
+
+/* menu */
+const menu = $('#menu'), menuBtn = $('#menuBtn');
+function closeMenu() { menu.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); }
+menuBtn.addEventListener('click', e => { e.stopPropagation(); const open = menu.hidden; menu.hidden = !open; menuBtn.setAttribute('aria-expanded', String(open)); });
+document.addEventListener('click', e => { if (!menu.hidden && !menu.contains(e.target)) closeMenu(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+menu.querySelectorAll('[data-exemplo]').forEach(bt => bt.addEventListener('click', () => {
+  if (bt.getAttribute('aria-disabled') === 'true') return;
+  closeMenu(); enviarExemplo(bt.dataset.exemplo);
+}));
+$('#mReset').addEventListener('click', () => { closeMenu(); resetChat(); });
+$('#againBtn').addEventListener('click', resetChat);
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+/* ---------------- demonstração ---------------- */
+const demo = (() => {
+  const stage = $('#stage'), status = $('#demoStatus'), bubble = $('#stageBubble'), stageText = $('#stageText');
+  const steps = [...document.querySelectorAll('#demoSteps li')], playBtn = $('#demoPlay'), hudFoto = $('#hudFoto');
+  const okIcon = icon('i-check');
+  // cada passo: duração, estado da barra, fala da MIRA, foto
+  const T = [
+    { dur: 2600, st: ['idle', 'AGUARDANDO'], say: 'Olá! Mande uma foto usando o capacete.', foto: 0 },
+    { dur: 2000, st: ['idle', 'AGUARDANDO'], say: null, foto: 0 },
+    { dur: 2600, st: ['check', 'VERIFICANDO'], say: 'Capacete validado ✓ Agora capacete e colete.', foto: 1 },
+    { dur: 2000, st: ['check', 'VERIFICANDO'], say: null, foto: 1 },
+    { dur: 2600, st: ['check', 'VERIFICANDO'], say: 'Capacete ✓  Colete ✓', foto: 2 },
+    { dur: 2400, st: ['ok', 'CONFORME'], say: 'Liberado para a obra!', foto: 2 },
+    { dur: 4200, st: ['ok', 'CONFORME'], say: 'Bom trabalho! 👷', foto: 2 },
+  ];
+  let i = -1, timer = 0, playing = true, active = false;
+  function show(n) {
+    i = n;
+    const cls = ['stage']; for (let k = 0; k <= n; k++) cls.push('s' + k);
+    stage.className = cls.join(' ');
+    const s = T[n];
+    status.dataset.state = s.st[0];
+    status.innerHTML = (s.st[0] === 'ok' ? okIcon : '') + `<span>${s.st[1]}</span>`;
+    hudFoto.textContent = `FOTO ${s.foto}/2`;
+    if (s.say) { stageText.textContent = s.say; bubble.hidden = false; bubble.classList.remove('pop'); void bubble.offsetWidth; bubble.classList.add('pop'); }
+    steps.forEach((li, k) => { li.classList.toggle('on', k === n); li.classList.toggle('done', k < n); });
+  }
+  function next() {
+    clearTimeout(timer);
+    if (i >= T.length - 1) { restart(); return; }
+    show(i + 1);
+    if (playing) timer = setTimeout(next, T[i].dur);
+  }
+  function restart() {
+    clearTimeout(timer);
+    stage.classList.add('noanim'); stage.className = 'stage noanim s0'; bubble.hidden = true;
+    void stage.offsetWidth;
+    i = -1;
+    requestAnimationFrame(() => { stage.classList.remove('noanim'); next(); });
+  }
+  function setPlaying(v) {
+    playing = v;
+    playBtn.innerHTML = icon(v ? 'i-pause' : 'i-play') + `<span>${v ? 'Pausar' : 'Continuar'}</span>`;
+    clearTimeout(timer);
+    if (v && active) timer = setTimeout(next, 700);
+  }
+  playBtn.addEventListener('click', () => setPlaying(!playing));
+  $('#demoRestart').addEventListener('click', () => { setPlaying(true); restart(); });
+  steps.forEach((li, k) => { li.style.cursor = 'pointer'; li.addEventListener('click', () => { setPlaying(false); show(k); stage.classList.add('noanim'); void stage.getBoundingClientRect(); stage.classList.remove('noanim'); }); });
+  return {
+    toggle(v) {
+      if (v === active) return; active = v;
+      if (v) { setPlaying(true); restart(); } else clearTimeout(timer);
+    }
+  };
+})();
+
+addEventListener('hashchange', route);
+route();
+setTimeout(() => carregarIA().catch(() => { }), 1500);
+})();
+</script>
+</body>
+</html>
