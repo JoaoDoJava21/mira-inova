@@ -24,7 +24,7 @@
   --navy:#021849;        /* Azul Profundo da marca MIRA */
   --navy-2:#0a2a66;
   --navy-3:#1b4796;
-  --hiviz:#ffc81e;       /* amarelo de sinalização */
+  --hiviz:#22d36b;       /* verde de sinalização */
   --vest:#ff7a1a;        /* laranja do colete */
   --reflect:#e6edf6;     /* faixa refletiva */
   --ok:#139a52;
@@ -110,11 +110,11 @@ a{color:inherit}
 .act small{display:block;color:var(--on-navy-2);font-size:13.5px;line-height:1.3;margin-top:2px}
 .act .arr{width:20px;height:20px;opacity:.7}
 .act-primary{background:var(--hiviz);border-color:var(--hiviz);color:var(--navy)}
-.act-primary:hover{background:#ffd447}
+.act-primary:hover{background:#52e08f}
 .act-primary small{color:rgba(2,24,73,.75)}
 .act-primary .ico{background:var(--navy);color:var(--hiviz)}
 .act-primary{animation:pulseBtn 2.6s ease-in-out infinite}
-@keyframes pulseBtn{0%,100%{box-shadow:0 0 0 0 rgba(255,200,30,.0)}50%{box-shadow:0 0 0 7px rgba(255,200,30,.18)}}
+@keyframes pulseBtn{0%,100%{box-shadow:0 0 0 0 rgba(34,211,107,.0)}50%{box-shadow:0 0 0 7px rgba(34,211,107,.18)}}
 .home-specs{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .home-specs span:first-child{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-navy-2);margin-right:4px}
 .chip{font-family:var(--f-mono);font-size:12px;padding:4px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.22);color:var(--on-navy)}
@@ -157,7 +157,7 @@ a{color:inherit}
   background-size:140px 140px}
 .chat-scroll{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;z-index:1}
 .msgs{display:flex;flex-direction:column;gap:4px;padding-block:12px 18px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
-.sys{align-self:center;max-width:88%;text-align:center;font-size:12.5px;line-height:1.35;background:#fff6d6;color:#5b4a12;padding:7px 11px;border-radius:8px;box-shadow:0 1px 1px rgba(2,24,73,.08);margin:4px 0}
+.sys{align-self:center;max-width:88%;text-align:center;font-size:12.5px;line-height:1.35;background:#e1f7e8;color:#1b5a35;padding:7px 11px;border-radius:8px;box-shadow:0 1px 1px rgba(2,24,73,.08);margin:4px 0}
 .day{align-self:center;font-size:12px;font-weight:600;color:var(--muted);background:var(--card);padding:5px 11px;border-radius:8px;box-shadow:0 1px 1px rgba(2,24,73,.08);margin:6px 0 2px}
 .row{display:flex;flex-direction:column;max-width:84%;animation:msgIn .28s cubic-bezier(.2,.9,.3,1.2) both}
 .row.in{align-self:flex-start;transform-origin:0 100%}
@@ -197,15 +197,15 @@ a{color:inherit}
 .qbtn svg{width:18px;height:18px;flex:none}
 .qbtn:hover{background:#f5f8fc}
 .qbtn.main{color:var(--navy);background:var(--hiviz)}
-.qbtn.main:hover{background:#ffd447}
+.qbtn.main:hover{background:#52e08f}
 .qbtns.off .qbtn.foto{opacity:.45;pointer-events:none}
 
 /* análise da foto */
 .analysis{padding:4px;width:min(272px,72vw);max-width:100%}
 .scan{position:relative;border-radius:6px;overflow:hidden;background:var(--navy)}
 .scan img{display:block;width:100%;height:auto;max-height:300px;object-fit:cover;filter:saturate(.85)}
-.scan-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,200,30,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(255,200,30,.18) 1px,transparent 1px);background-size:22px 22px;mix-blend-mode:screen;transition:opacity .4s}
-.scan-line{position:absolute;left:0;right:0;height:46px;top:-46px;background:linear-gradient(180deg,rgba(255,200,30,0),rgba(255,200,30,.45) 85%,var(--hiviz));box-shadow:0 2px 10px var(--hiviz);animation:scanY 1.5s cubic-bezier(.45,0,.55,1) infinite}
+.scan-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(34,211,107,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,107,.18) 1px,transparent 1px);background-size:22px 22px;mix-blend-mode:screen;transition:opacity .4s}
+.scan-line{position:absolute;left:0;right:0;height:46px;top:-46px;background:linear-gradient(180deg,rgba(34,211,107,0),rgba(34,211,107,.45) 85%,var(--hiviz));box-shadow:0 2px 10px var(--hiviz);animation:scanY 1.5s cubic-bezier(.45,0,.55,1) infinite}
 @keyframes scanY{from{top:-46px}to{top:100%}}
 .corner{position:absolute;width:20px;height:20px;border:3px solid var(--hiviz)}
 .corner.tl{top:8px;left:8px;border-right:0;border-bottom:0}.corner.tr{top:8px;right:8px;border-left:0;border-bottom:0}
@@ -265,7 +265,7 @@ a{color:inherit}
 .cam-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--muted);cursor:pointer;flex:none;position:relative}
 .cam-btn svg{width:23px;height:23px}
 .cam-btn.attn{color:var(--navy);background:var(--hiviz);animation:camPulse 1.5s ease-in-out infinite}
-@keyframes camPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,200,30,.7)}60%{box-shadow:0 0 0 9px rgba(255,200,30,0)}}
+@keyframes camPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,211,107,.7)}60%{box-shadow:0 0 0 9px rgba(34,211,107,0)}}
 .cam-btn.disabled{opacity:.35;pointer-events:none}
 .send-btn{width:48px;height:48px;border-radius:50%;border:0;background:var(--navy);color:var(--white);display:grid;place-items:center;cursor:pointer;flex:none;transition:transform .12s}
 .send-btn:active{transform:scale(.92)}
@@ -316,7 +316,7 @@ a{color:inherit}
 .stage-bubble .mini-av svg{width:16px;height:16px}
 .stage-bubble b{display:block;font-size:11.5px;color:var(--navy-3)}
 .status-bar{display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:.06em;color:var(--white);background:#55627a;transition:background .35s}
-.status-bar[data-state="check"]{background:#b58a00}
+.status-bar[data-state="check"]{background:#0e7a48}
 .status-bar[data-state="ok"]{background:var(--ok)}
 .status-bar[data-state="ok"] span{animation:stamp .45s cubic-bezier(.2,1.6,.4,1)}
 .status-bar svg{width:24px;height:24px}
@@ -325,7 +325,7 @@ a{color:inherit}
 .c-sky{fill:var(--navy)} .c-grid{stroke:rgba(255,255,255,.06)} .c-build{fill:var(--navy-2)} .c-build-2{fill:#123671}
 .c-line{stroke:#2b5aa8;fill:none} .c-ground{fill:#0d2557} .c-ground-2{fill:#163066}
 .c-skin{fill:var(--skin)} .c-skin-2{fill:var(--skin-2)} .c-shirt{fill:var(--shirt)} .c-pants{fill:var(--pants)} .c-shoe{fill:#1a1f2b}
-.c-helmet{fill:var(--hiviz)} .c-helmet-2{fill:#e0a800} .c-vest{fill:var(--vest)} .c-reflect{fill:var(--reflect)} .c-dark{fill:#1d2a44}
+.c-helmet{fill:var(--hiviz)} .c-helmet-2{fill:#14a352} .c-vest{fill:var(--vest)} .c-reflect{fill:var(--reflect)} .c-dark{fill:#1d2a44}
 .c-cap{fill:#2f6fd6} .c-cap-2{fill:#2459b0} .c-jacket{fill:#3b4558} .c-jacket-2{fill:#2e3646}
 .c-hair{fill:#3a2a1f}
 .c-post{fill:#9aa7bd} .c-arm{fill:var(--bad)} .c-arm-w{fill:var(--white)}
@@ -388,7 +388,7 @@ a{color:inherit}
 .flow span{font-size:13.5px;color:var(--muted);line-height:1.35}
 .sec{display:grid;gap:12px}
 .sec-h{display:flex;align-items:center;gap:10px;margin:6px 0 0}
-.sec-h .badge{width:38px;height:38px;border-radius:10px;background:var(--navy);display:grid;place-items:center;flex:none}
+.sec-h .badge{width:38px;height:38px;border-radius:10px;background:var(--navy);color:var(--hiviz);display:grid;place-items:center;flex:none}
 .sec-h .badge svg{width:24px;height:24px}
 .sec-h h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:25px;text-transform:uppercase;letter-spacing:.02em;line-height:1}
 .sec-h small{display:block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-top:3px}
@@ -428,7 +428,7 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
 .fig .ph{position:relative;aspect-ratio:4/5;overflow:hidden;background:#dfe6f0}
 .fig .ph img{display:block;width:100%;height:100%;object-fit:cover}
 .fig .ph::after{content:"";position:absolute;left:0;right:0;top:-30%;height:30%;pointer-events:none;
-  background:linear-gradient(180deg,rgba(255,200,30,0),rgba(255,200,30,.28));border-bottom:2px solid rgba(255,200,30,.8);animation:figscan 4.5s ease-in-out infinite}
+  background:linear-gradient(180deg,rgba(34,211,107,0),rgba(34,211,107,.28));border-bottom:2px solid rgba(34,211,107,.8);animation:figscan 4.5s ease-in-out infinite}
 .fig:nth-child(2) .ph::after{animation-delay:1.2s}.fig:nth-child(3) .ph::after{animation-delay:2.4s}.fig:nth-child(4) .ph::after{animation-delay:3.4s}
 @keyframes figscan{0%{top:-30%}45%,100%{top:100%}}
 .res{position:absolute;left:6px;bottom:6px;z-index:1;font-family:var(--f-display);font-weight:800;font-size:13.5px;letter-spacing:.05em;padding:3px 7px 2px;border-radius:3px;color:var(--white);line-height:1.1}
@@ -446,10 +446,184 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
 .credits a{color:var(--navy-3)}
 /* carregamento da IA no chat */
 .sys.load{display:grid;gap:6px;min-width:220px}
-.bar{height:6px;border-radius:6px;background:rgba(91,74,18,.18);overflow:hidden}
+.bar{height:6px;border-radius:6px;background:rgba(27,90,53,.18);overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--navy);border-radius:6px;transition:width .25s}
 .ex-tag{position:absolute;left:10px;top:10px;font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.06em;background:rgba(2,24,73,.8);color:var(--white);padding:3px 6px;border-radius:3px}
 .menu button[aria-disabled="true"]{opacity:.4;cursor:default}
+
+/* ================= RESPONSIVO =================
+   Celular (< 720px): o layout acima, uma coluna.
+   Tablet (>= 720px): conteúdo centrado e mais largo, demo em duas colunas, manual com grades maiores.
+   Notebook (>= 1000px): início em duas colunas sobre as fotos com QR code, chat com painel lateral
+   (como um mensageiro de desktop), manual em duas colunas.
+   --wrap é a largura máxima do conteúdo das páginas; --chatw, a da coluna de mensagens. */
+.app{max-width:none;box-shadow:none}
+.home-side{display:grid;gap:14px}
+.home-qr,.chat-side{display:none}
+.demo-player{display:grid;gap:12px}
+.demo-player .demo-ctrl{margin-top:0}
+
+@media (min-width:600px){
+  :root{--wrap:680px;--chatw:760px}
+  .page-scroll{padding-left:max(24px,env(safe-area-inset-left,0px),calc((100% - var(--wrap))/2));padding-right:max(24px,env(safe-area-inset-right,0px),calc((100% - var(--wrap))/2))}
+  .page-head{padding-left:max(8px,env(safe-area-inset-left,0px),calc((100% - var(--wrap))/2 - 16px));padding-right:max(16px,env(safe-area-inset-right,0px),calc((100% - var(--wrap))/2))}
+  .chat-head{padding-left:max(8px,env(safe-area-inset-left,0px),calc((100% - var(--chatw))/2));padding-right:max(8px,env(safe-area-inset-right,0px),calc((100% - var(--chatw))/2))}
+  .msgs{padding-left:max(16px,env(safe-area-inset-left,0px),calc((100% - var(--chatw))/2 + 8px));padding-right:max(16px,env(safe-area-inset-right,0px),calc((100% - var(--chatw))/2 + 8px))}
+  .chat-input{padding-left:max(8px,env(safe-area-inset-left,0px),calc((100% - var(--chatw))/2));padding-right:max(8px,env(safe-area-inset-right,0px),calc((100% - var(--chatw))/2))}
+  .event-inner{padding-left:max(16px,env(safe-area-inset-left,0px),calc((100% - var(--chatw))/2 + 8px));padding-right:max(16px,env(safe-area-inset-right,0px),calc((100% - var(--chatw))/2 + 8px))}
+  .row{max-width:min(80%,560px)}
+  .gal{grid-auto-columns:minmax(260px,46%)}
+}
+
+@media (min-width:720px){
+  :root{--wrap:760px;--chatw:840px}
+  /* início */
+  .home-photos{height:82%}
+  .home-body{gap:24px;padding-left:max(40px,calc((100% - 680px)/2));padding-right:max(40px,calc((100% - 680px)/2))}
+  .home-body > .event-tag{margin-top:auto}
+  .home-body > .home-specs{margin-bottom:auto}
+  .home-logo{width:270px}
+  .home-title{font-size:clamp(44px,min(7.4vw,9vh),68px)}
+  .home-lede{font-size:18px;max-width:46ch}
+  .home-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .act-primary{grid-column:1/-1}
+  .home-foot{text-align:center;padding-left:max(40px,calc((100% - 680px)/2));padding-right:max(40px,calc((100% - 680px)/2))}
+  /* chat */
+  .bubble{font-size:16px}
+  .photo-bubble img{width:300px}
+  .analysis{width:340px}
+  .scan img{max-height:400px}
+  .pass{width:360px}
+  .pass-name{font-size:32px}
+  .event-inner{grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:24px}
+  .event-actions{min-width:400px}
+  /* páginas */
+  .page-head h2{font-size:26px}
+  .page-scroll{gap:24px;padding-top:24px}
+  .lede{font-size:17px;max-width:70ch}
+  .cta-card{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"h a" "p a";align-items:center;column-gap:28px;row-gap:6px;padding:22px 24px}
+  .cta-card h3{grid-area:h;font-size:28px}
+  .cta-card p{grid-area:p}
+  .cta-card .btn{grid-area:a;padding-inline:22px}
+  /* demonstração: animação ao lado dos passos */
+  [data-screen="demo"] .page-scroll{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+    grid-template-areas:"lede lede" "player steps" "gal gal" "cta cta";column-gap:clamp(20px,3vw,44px);row-gap:24px;align-content:start;align-items:start}
+  [data-screen="demo"] .lede{grid-area:lede}
+  .demo-player{grid-area:player}
+  .steps{grid-area:steps}
+  .demo-gal{grid-area:gal}
+  [data-screen="demo"] .cta-card{grid-area:cta}
+  /* manual */
+  .flow{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .figs.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .figs.two .ph{aspect-ratio:1/1}
+  .norms{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .sec-h h3{font-size:28px}
+}
+
+@media (min-width:1000px){
+  :root{--wrap:1120px;--chatw:860px}
+  /* início: duas colunas sobre as fotos em tela cheia */
+  .home-photos{height:100%}
+  .home-photos img.on{opacity:.8}
+  .home-photos::after{background:
+    linear-gradient(90deg,rgba(2,24,73,.97) 0%,rgba(2,24,73,.88) 36%,rgba(2,24,73,.38) 66%,rgba(2,24,73,.2) 100%),
+    linear-gradient(0deg,var(--navy) 0%,rgba(2,24,73,0) 26%)}
+  .home-body{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(360px,430px);
+    grid-template-rows:1fr repeat(5,auto) 1fr;
+    grid-template-areas:". ." "tag side" "logo side" "title side" "lede side" "specs side" ". .";
+    column-gap:clamp(48px,7vw,120px);row-gap:18px;padding-block:24px 20px;
+    padding-left:max(48px,calc((100% - 1200px)/2));padding-right:max(48px,calc((100% - 1200px)/2))}
+  .home-body > .event-tag,.home-body > .home-specs{margin:0}
+  .event-tag{grid-area:tag;justify-self:start}
+  .home-logo{grid-area:logo;width:clamp(180px,min(21vw,30vh),320px)}
+  .home-title{grid-area:title;font-size:clamp(54px,min(5.4vw,9.5vh),92px);max-width:13ch}
+  .home-lede{grid-area:lede;font-size:19px;max-width:44ch}
+  .home-specs{grid-area:specs}
+  .home-side{grid-area:side;align-self:center;gap:16px}
+  .home-actions{grid-template-columns:minmax(0,1fr)}
+  .act{padding:16px 16px 16px 14px}
+  .act strong{font-size:18px}
+  .act small{font-size:14px}
+  .home-qr{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;padding:14px;border-radius:14px;
+    background:rgba(2,24,73,.62);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  .home-qr img{width:112px;height:112px;border-radius:8px;display:block}
+  .home-qr strong{display:block;font-size:17px;line-height:1.2}
+  .home-qr span{display:block;font-size:13.5px;color:var(--on-navy-2);margin-top:3px;line-height:1.3}
+  .home-qr code{display:block;margin-top:8px;font-family:var(--f-mono);font-size:12.5px;color:var(--hiviz);overflow-wrap:anywhere}
+  .home-foot{text-align:left;padding-left:max(48px,calc((100% - 1200px)/2));padding-right:max(48px,calc((100% - 1200px)/2))}
+  .photo-credit{right:max(48px,calc((100% - 1200px)/2))}
+
+  /* chat: painel lateral + conversa, como um mensageiro de desktop */
+  .chat{display:grid;grid-template-columns:clamp(300px,27vw,370px) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto auto}
+  .chat-head{grid-column:2;grid-row:1}
+  .chat-area{grid-column:2;grid-row:2}
+  .chat-input{grid-column:2;grid-row:3}
+  .event-bar{grid-column:2;grid-row:4}
+  .chat-side{grid-column:1;grid-row:1/-1;display:flex;flex-direction:column;gap:16px;overflow-y:auto;min-height:0;
+    padding:22px 20px 16px;color:var(--on-navy);background-color:var(--navy);
+    background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+    background-size:28px 28px;border-right:1px solid rgba(255,255,255,.1)}
+  .side-top{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+  .side-logo{width:150px;height:auto;display:block}
+  .side-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px 14px 8px}
+  .side-k{font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--on-navy-2)}
+  .side-who{margin:3px 0 8px;font-family:var(--f-display);font-weight:700;font-size:24px;line-height:1.05;text-transform:uppercase;color:rgba(255,255,255,.5);overflow-wrap:anywhere;transition:color .3s}
+  .side-who.set{color:var(--white)}
+  .side-steps{list-style:none;margin:0;padding:0;display:grid;counter-reset:ss}
+  .side-steps li{counter-increment:ss;position:relative;display:grid;grid-template-columns:30px minmax(0,1fr);column-gap:12px;padding:7px 0}
+  .side-steps li::before{content:counter(ss);grid-row:1/3;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+    font-family:var(--f-display);font-weight:800;font-size:16px;border:2px solid rgba(255,255,255,.25);color:var(--on-navy-2);transition:all .3s}
+  .side-steps li:not(:last-child)::after{content:"";position:absolute;left:14px;top:39px;bottom:-5px;width:2px;background:rgba(255,255,255,.14);transition:background .3s}
+  .side-steps b{font-size:15px;line-height:1.25;color:rgba(255,255,255,.72)}
+  .side-steps span{font-size:12.5px;color:var(--on-navy-2)}
+  .side-steps li.on::before{background:var(--hiviz);border-color:var(--hiviz);color:var(--navy);animation:camPulse 1.5s ease-in-out infinite}
+  .side-steps li.on b,.side-steps li.done b{color:var(--white)}
+  .side-steps li.done::before{background:var(--ok);border-color:var(--ok);color:var(--white)}
+  .side-steps li.done::after{background:var(--ok)}
+  .side-ia{display:flex;align-items:center;gap:8px;margin:0;font-family:var(--f-mono);font-size:11.5px;color:var(--on-navy-2)}
+  .side-ia .led{width:9px;height:9px;border-radius:50%;background:#8593a8;flex:none}
+  .side-ia[data-state="loading"] .led{background:var(--hiviz);animation:blink 1s steps(2) infinite}
+  .side-ia[data-state="ready"] .led{background:#2fd06d;box-shadow:0 0 8px #2fd06d}
+  .side-ia[data-state="error"] .led{background:var(--vest)}
+  .side-tip{margin:0;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);flex:none}
+  .side-tip img{display:block;width:100%;height:150px;object-fit:cover;object-position:50% 22%}
+  .side-tip figcaption{padding:10px 12px 12px;font-size:13px;line-height:1.35;color:var(--on-navy-2)}
+  .side-tip b{display:block;font-family:var(--f-display);font-size:17px;letter-spacing:.04em;text-transform:uppercase;color:var(--hiviz)}
+  .side-links{display:grid;gap:2px;margin-top:auto}
+  .side-links a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;text-decoration:none;font-weight:600;font-size:14.5px;transition:background .15s}
+  .side-links a:hover{background:rgba(255,255,255,.08)}
+  .side-links svg{width:18px;height:18px;opacity:.8;flex:none}
+  .row{max-width:min(72%,560px)}
+
+  /* demonstração: a animação cabe inteira na altura da tela */
+  [data-screen="demo"] .page-scroll{grid-template-columns:min(560px,max(340px,calc((100vh - 300px) * .947))) minmax(0,1fr)}
+  [data-screen="demo"] .lede{max-width:none}
+  .steps li{padding:11px 12px}
+  .steps li strong{font-size:16.5px}
+  .steps li span{font-size:14.5px}
+  .gal{grid-auto-flow:row;grid-auto-columns:auto;grid-template-columns:repeat(6,minmax(0,1fr));overflow:visible;scroll-snap-type:none;margin-inline:0;padding-inline:0;gap:14px}
+  .gal figure{grid-column:span 2;transition:transform .2s,box-shadow .2s}
+  .gal figure:nth-child(-n+2){grid-column:span 3}
+  .gal figure:nth-child(-n+2) .ph{aspect-ratio:16/10}
+  .gal figure:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(2,24,73,.16)}
+
+  /* manual: duas colunas; blocos largos ocupam a linha toda */
+  [data-screen="manual"] .page-scroll{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px;row-gap:28px;align-content:start;align-items:start}
+  [data-screen="manual"] .page-scroll > .full{grid-column:1/-1}
+  .figs.two .ph{aspect-ratio:4/5}
+  .norms{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fig figcaption{font-size:14px}
+}
+@media (min-width:1000px) and (max-height:800px){
+  .side-tip{display:none}
+}
+@media (min-width:1400px){
+  :root{--wrap:1240px;--chatw:900px}
+  .home-body{padding-left:max(64px,calc((100% - 1320px)/2));padding-right:max(64px,calc((100% - 1320px)/2))}
+  .home-foot{padding-left:max(64px,calc((100% - 1320px)/2));padding-right:max(64px,calc((100% - 1320px)/2))}
+  .photo-credit{right:max(64px,calc((100% - 1320px)/2))}
+}
 
 @media (max-width:370px){
   .figs{gap:6px} .fig figcaption{font-size:12px}
@@ -482,16 +656,16 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
     <symbol id="i-film" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></symbol>
     <symbol id="i-badge" viewBox="0 0 24 24"><path d="M12 2.5l2.4 1.8 3-.1.9 2.9 2.4 1.8-.9 2.9.9 2.9-2.4 1.8-.9 2.9-3-.1L12 21.1l-2.4-1.8-3 .1-.9-2.9-2.4-1.8.9-2.9-.9-2.9 2.4-1.8.9-2.9 3 .1z" fill="currentColor"/><path d="M8.3 12.2l2.5 2.5 4.9-5" fill="none" stroke="#021849" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <!-- capacete usado como ícone -->
-    <symbol id="i-helmet" viewBox="0 0 24 24"><path d="M4 16a8 8 0 0 1 16 0z" fill="#ffc81e"/><rect x="2.5" y="15.5" width="19" height="3" rx="1.5" fill="#ffc81e"/><path d="M12 8v4M9 9.5v3M15 9.5v3" stroke="#021849" stroke-width="1.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-helmet" viewBox="0 0 24 24"><path d="M4 16a8 8 0 0 1 16 0z" fill="#22d36b"/><rect x="2.5" y="15.5" width="19" height="3" rx="1.5" fill="#22d36b"/><path d="M12 8v4M9 9.5v3M15 9.5v3" stroke="#021849" stroke-width="1.4" stroke-linecap="round"/></symbol>
     <symbol id="i-vest" viewBox="0 0 24 24"><path d="M8 3l-4 3v15h7V8zM16 3l4 3v15h-7V8z" fill="#ff7a1a"/><rect x="4" y="13" width="7" height="2" fill="#e6edf6"/><rect x="13" y="13" width="7" height="2" fill="#e6edf6"/></symbol>
-    <symbol id="i-photo" viewBox="0 0 24 24"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16" fill="none" stroke="#ffc81e" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10" r="2.6" fill="#ffffff"/><path d="M7.5 17a4.5 4.5 0 0 1 9 0" fill="#ffffff"/></symbol>
-    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="#ffc81e" stroke-width="2"/><path d="M9 2.5v3M15 2.5v3M9 18.5v3M15 18.5v3M2.5 9h3M2.5 15h3M18.5 9h3M18.5 15h3" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/><rect x="9.5" y="9.5" width="5" height="5" fill="#ffffff"/></symbol>
+    <symbol id="i-photo" viewBox="0 0 24 24"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16" fill="none" stroke="#22d36b" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10" r="2.6" fill="#ffffff"/><path d="M7.5 17a4.5 4.5 0 0 1 9 0" fill="#ffffff"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="#22d36b" stroke-width="2"/><path d="M9 2.5v3M15 2.5v3M9 18.5v3M15 18.5v3M2.5 9h3M2.5 15h3M18.5 9h3M18.5 15h3" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/><rect x="9.5" y="9.5" width="5" height="5" fill="#ffffff"/></symbol>
 
     <!-- avatar MIRA -->
     <symbol id="mira-av" viewBox="0 0 48 48">
       <circle cx="24" cy="24" r="24" fill="#021849"/>
-      <path d="M11 28a13 13 0 0 1 26 0z" fill="#ffc81e"/>
-      <rect x="8.5" y="27" width="31" height="4.4" rx="2.2" fill="#ffc81e"/>
+      <path d="M11 28a13 13 0 0 1 26 0z" fill="#22d36b"/>
+      <rect x="8.5" y="27" width="31" height="4.4" rx="2.2" fill="#22d36b"/>
       <path d="M24 16v5.5M19 18v3.6M29 18v3.6" stroke="#021849" stroke-width="1.8" stroke-linecap="round"/>
       <circle cx="24" cy="15.3" r="1.6" fill="#021849"/>
       <path d="M15 37l3-3.4 3 2.4 3-3 3 3 3-2.4 3 3.4" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -514,8 +688,9 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
   <div class="home-body">
     <div class="event-tag"><span class="dot" aria-hidden="true"></span>INOVA NACIONAL 2026</div>
     <img class="home-logo" src="img/logo-branco.png" alt="MIRA, Modelo de Inspeção e Resposta Autônoma" width="280" height="151">
-    <h1 class="home-title">Sua entrada na obra passa pela <em>MIRA</em></h1>
-    <p class="home-lede">A IA que confere capacete e colete antes de liberar o trabalhador. Faça o teste pelo chat: a análise roda aqui, no seu celular.</p>
+    <h1 class="home-title">Sua entrada na obra passa pelo <em>MIRA</em></h1>
+    <p class="home-lede">A IA que confere capacete e colete antes de liberar o trabalhador. Faça o teste pelo chat: a análise roda aqui, no seu navegador.</p>
+    <div class="home-side">
     <nav class="home-actions" aria-label="O que fazer">
       <a class="act act-primary" href="#chat">
         <span class="ico"><svg aria-hidden="true"><use href="#i-chat"/></svg></span>
@@ -533,6 +708,11 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
         <svg class="arr" aria-hidden="true"><use href="#i-arrow"/></svg>
       </a>
     </nav>
+    <div class="home-qr">
+      <img src="img/qr.svg" alt="QR code para abrir o MIRA no celular" width="120" height="120">
+      <div><strong>Faça o teste no seu celular</strong><span>Aponte a câmera para o código ou acesse</span><code>joaodojava21.github.io/mira-inova</code></div>
+    </div>
+    </div>
     <div class="home-specs"><span>A MIRA reconhece</span><span class="chip">capacete</span><span class="chip">colete</span><span class="chip">luvas</span><span class="chip">óculos</span><span class="chip">cinturão</span></div>
   </div>
   <p class="home-foot">Na obra, o MIRA roda nas câmeras e em drone, direto no computador e sem internet. Aqui, o mesmo modelo roda no seu navegador.</p>
@@ -540,6 +720,32 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
 
 <!-- ================= CHAT ================= -->
 <section class="screen chat" data-screen="chat" aria-label="Conversa com a MIRA" hidden>
+  <aside class="chat-side" aria-label="Painel da inspeção">
+    <div class="side-top">
+      <img class="side-logo" src="img/logo-branco.png" alt="MIRA" width="280" height="151">
+      <span class="event-tag"><span class="dot" aria-hidden="true"></span>INOVA NACIONAL 2026</span>
+    </div>
+    <div class="side-card">
+      <small class="side-k">Inspeção de EPI</small>
+      <p class="side-who" id="sideWho">Aguardando identificação</p>
+      <ol class="side-steps" id="sideSteps">
+        <li><b>Seu nome</b><span>Identificação no chat</span></li>
+        <li><b>Foto com capacete</b><span>Etapa 1 de 2</span></li>
+        <li><b>Capacete e colete</b><span>Etapa 2 de 2</span></li>
+        <li><b>Passe de obra</b><span>Entrada liberada</span></li>
+      </ol>
+    </div>
+    <p class="side-ia" id="sideIA"><span class="led" aria-hidden="true"></span><span id="sideIAtxt">IA: aguardando</span></p>
+    <figure class="side-tip">
+      <img src="img/foto-certa-ia.jpg" alt="Exemplo de foto certa: de frente, da cintura para cima, capacete e colete detectados" loading="lazy">
+      <figcaption><b>Foto certa</b>De frente, da cintura para cima, com luz no rosto e uma pessoa por foto.</figcaption>
+    </figure>
+    <nav class="side-links" aria-label="Outras telas">
+      <a href="#demo"><svg aria-hidden="true"><use href="#i-film"/></svg>Demonstração</a>
+      <a href="#manual"><svg aria-hidden="true"><use href="#i-book"/></svg>Manual do EPI</a>
+      <a href="#inicio"><svg aria-hidden="true"><use href="#i-back"/></svg>Início</a>
+    </nav>
+  </aside>
   <header class="chat-head">
     <a class="icon-btn" href="#inicio" aria-label="Voltar ao início"><svg aria-hidden="true"><use href="#i-back"/></svg></a>
     <div class="avatar"><svg aria-hidden="true"><use href="#mira-av"/></svg></div>
@@ -595,6 +801,7 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
   </header>
   <div class="page-scroll">
     <p class="lede">Sem EPI aí? Acompanhe um trabalhador passando pela MIRA, do jeito certo, até a cancela abrir.</p>
+    <div class="demo-player">
     <div class="stage-wrap">
       <div class="stage" id="stage">
         <svg viewBox="0 0 360 380" aria-hidden="true">
@@ -623,7 +830,7 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
           <!-- chão -->
           <rect class="c-ground" y="330" width="360" height="50"/>
           <rect class="c-ground-2" y="330" width="360" height="4"/>
-          <g fill="#ffc81e" opacity=".5"><rect x="14" y="352" width="26" height="4"/><rect x="66" y="352" width="26" height="4"/><rect x="118" y="352" width="26" height="4"/><rect x="170" y="352" width="26" height="4"/></g>
+          <g fill="#22d36b" opacity=".5"><rect x="14" y="352" width="26" height="4"/><rect x="66" y="352" width="26" height="4"/><rect x="118" y="352" width="26" height="4"/><rect x="170" y="352" width="26" height="4"/></g>
           <!-- cancela -->
           <g>
             <rect class="c-post" x="241" y="280" width="12" height="52" rx="2"/>
@@ -695,6 +902,7 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
       <button class="btn grow" type="button" id="demoPlay"><svg aria-hidden="true"><use href="#i-pause"/></svg><span>Pausar</span></button>
       <button class="btn" type="button" id="demoRestart"><svg aria-hidden="true"><use href="#i-redo"/></svg>Do início</button>
     </div>
+    </div>
     <ol class="steps" id="demoSteps">
       <li><span><strong>Chega à entrada da obra</strong><span>A cancela está fechada. A MIRA pede a primeira foto.</span></span></li>
       <li><span><strong>Põe o capacete</strong><span>Na cabeça, aba para a frente, jugular presa no queixo.</span></span></li>
@@ -704,7 +912,7 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
       <li><span><strong>CONFORME</strong><span>A cancela abre e o passe de obra é liberado.</span></span></li>
       <li><span><strong>Bom trabalho!</strong><span>O trabalhador entra na obra com segurança.</span></span></li>
     </ol>
-    <section class="sec" aria-labelledby="h-gal">
+    <section class="sec demo-gal" aria-labelledby="h-gal">
       <div class="sec-h"><span class="badge"><svg aria-hidden="true"><use href="#i-photo"/></svg></span><div><h3 id="h-gal">A IA em fotos reais</h3><small>Caixas desenhadas pelo modelo mira_ppe</small></div></div>
       <div class="gal" tabindex="0" aria-label="Fotos reais analisadas pela MIRA (arraste para o lado)">
         <figure class="ok"><div class="ph"><img src="img/conforme-ia.jpg" alt="Trabalhador com capacete branco e colete laranja; a IA marca capacete 87% e colete 89%" style="object-position:50% 25%" loading="lazy"><span class="res">CONFORME</span></div>
@@ -734,9 +942,9 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
     <h2>Manual do EPI</h2><span class="pill">NR-6</span>
   </header>
   <div class="page-scroll">
-    <p class="lede">Como usar o capacete e o colete do jeito que a MIRA reconhece, e como tirar a foto para a validação dar certo na primeira tentativa. Todas as fotos abaixo são reais e as caixas foram desenhadas pelo próprio modelo do MIRA.</p>
+    <p class="lede full">Como usar o capacete e o colete do jeito que a MIRA reconhece, e como tirar a foto para a validação dar certo na primeira tentativa. Todas as fotos abaixo são reais e as caixas foram desenhadas pelo próprio modelo do MIRA.</p>
 
-    <section class="sec" aria-labelledby="h-fluxo">
+    <section class="sec full" aria-labelledby="h-fluxo">
       <div class="sec-h"><span class="badge"><svg aria-hidden="true"><use href="#i-chip"/></svg></span><div><h3 id="h-fluxo">Como a MIRA valida</h3><small>4 passos no chat</small></div></div>
       <ol class="flow">
         <li><strong>Seu nome</strong><span>Você se identifica na conversa.</span></li>
@@ -787,7 +995,7 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
       </ul>
     </section>
 
-    <section class="sec" aria-labelledby="h-foto">
+    <section class="sec full" aria-labelledby="h-foto">
       <div class="sec-h"><span class="badge"><svg aria-hidden="true"><use href="#i-photo"/></svg></span><div><h3 id="h-foto">A foto para a IA</h3><small>O formato que a MIRA lê melhor</small></div></div>
       <div class="figs four">
         <figure class="fig good">
@@ -831,7 +1039,7 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
         </table>
       </div>
       <p class="note">Um EPI conta como faltando quando ele não aparece, ou quando a IA vê "SEM capacete" ou "SEM colete" dentro da pessoa. Luvas, óculos e cinturão de segurança têm modelos próprios e podem ser cobrados em câmeras específicas, como as de trabalho em altura.</p>
-      <p class="note">No canteiro, o MIRA roda no próprio computador da obra, sem internet, em cerca de 20 ms por imagem. Neste site, o mesmo modelo roda no navegador do seu celular. Funciona com webcam, câmera de segurança e drone. Cada verificação vai para uma planilha, e as não conformidades ficam com foto.</p>
+      <p class="note">No canteiro, o MIRA roda no próprio computador da obra, sem internet, em cerca de 20 ms por imagem. Neste site, o mesmo modelo roda no navegador do seu celular ou computador. Funciona com webcam, câmera de segurança e drone. Cada verificação vai para uma planilha, e as não conformidades ficam com foto.</p>
     </section>
 
     <section class="sec" aria-labelledby="h-norma">
@@ -844,12 +1052,12 @@ td .g{color:var(--ok);font-weight:600} td .r{color:var(--bad);font-weight:600}
       </div>
     </section>
 
-    <div class="cta-card">
+    <div class="cta-card full">
       <h3>Pronto para a inspeção?</h3>
       <p>Coloque o capacete e o colete e mande as fotos para a MIRA.</p>
       <a class="btn yel" href="#chat">Fazer a inspeção no chat</a>
     </div>
-    <section class="sec" aria-labelledby="h-cred">
+    <section class="sec full" aria-labelledby="h-cred">
       <div class="sec-h"><div><h3 id="h-cred" style="font-size:19px">Créditos das fotos</h3><small>Licença CC BY 2.0 · caixas de detecção adicionadas pelo MIRA</small></div></div>
       <ul class="credits">
         <li>"Salem RR Depot - April 2014", OregonDOT · <a href="https://www.flickr.com/photos/28364885@N02/13972389965" target="_blank" rel="noopener">fonte</a>. Também usada nos exemplos de contraluz, distância e recorte (editada).</li>
@@ -914,9 +1122,9 @@ const homeFx = (() => {
     ctx.clearRect(0, 0, W, H);
     const y = ((t - t0) / 4200 % 1) * (H * .75 + 120) - 60;
     const g = ctx.createLinearGradient(0, y - 70, 0, y);
-    g.addColorStop(0, 'rgba(255,200,30,0)'); g.addColorStop(1, 'rgba(255,200,30,.2)');
+    g.addColorStop(0, 'rgba(34,211,107,0)'); g.addColorStop(1, 'rgba(34,211,107,.2)');
     ctx.fillStyle = g; ctx.fillRect(0, y - 70, W, 70);
-    ctx.fillStyle = 'rgba(255,200,30,.6)'; ctx.fillRect(0, y, W, 1.5);
+    ctx.fillStyle = 'rgba(34,211,107,.6)'; ctx.fillRect(0, y, W, 1.5);
     if (on) raf = requestAnimationFrame(frame);
   }
   function proxima() {
@@ -1129,10 +1337,32 @@ function setInput(mode) {
   form.querySelector('.send-btn').disabled = mode === 'wait';
   camBtn.classList.toggle('disabled', !photo);
   camBtn.classList.toggle('attn', photo);
+  painel();
   text.placeholder = mode === 'nome' ? 'Digite seu nome' : photo ? 'Toque na câmera e mande a foto' : 'Aguarde a MIRA…';
   document.querySelectorAll('.qbtns').forEach(q => q.classList.toggle('off', !photo));
   document.querySelectorAll('[data-exemplo]').forEach(b => b.setAttribute('aria-disabled', String(!photo)));
 }
+
+/* painel lateral do chat (notebook): progresso da inspeção e estado da IA */
+const sideSteps = [...document.querySelectorAll('#sideSteps li')], sideWho = $('#sideWho');
+const ETAPAS = ['nome', 'foto1', 'foto2', 'fim'];
+function painel() {
+  const i = Math.max(0, ETAPAS.indexOf(state)), fim = state === 'fim';
+  sideSteps.forEach((li, j) => {
+    li.classList.toggle('done', j < i || fim);
+    li.classList.toggle('on', j === i && !fim);
+    if (j === i && !fim) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+  });
+  sideWho.textContent = i > 0 && nomeCompleto ? nomeCompleto : 'Aguardando identificação';
+  sideWho.classList.toggle('set', i > 0 && !!nomeCompleto);
+}
+IA.ouvintes.add(() => {
+  const el = $('#sideIA'), t = $('#sideIAtxt');
+  el.dataset.state = IA.state;
+  t.textContent = IA.state === 'loading' ? `Carregando a IA… ${Math.round(IA.progress * 100)}%`
+    : IA.state === 'ready' ? 'IA pronta · roda no seu navegador'
+    : IA.state === 'error' ? 'Modo demonstração (IA indisponível)' : 'IA: aguardando';
+});
 const titleCase = s => s.toLowerCase().split(/\s+/).map((w, i) => i && /^(da|de|do|das|dos|e)$/.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 const pct = p => `${Math.round(p * 100)}%`;
 
@@ -1329,6 +1559,7 @@ async function analisar(url, etapa, exemplo) {
 
 async function liberar() {
   state = 'fim';
+  painel();
   await bot(`Tudo certo, **${nome}**! Capacete e colete conferidos. Você está **liberado para a obra**. 🏗️`, { delay: 1000 });
   await typing(900);
   const { b } = row('in', 'pass-row');
@@ -1355,7 +1586,7 @@ function confetti() {
   if (REDUCE) return;
   const cv = $('#confetti'), ctx = cv.getContext('2d'), r = cv.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
   cv.width = r.width * dpr; cv.height = r.height * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const cols = ['#ffc81e', '#ff7a1a', '#3ee38a', '#ffffff', '#1b4796'];
+  const cols = ['#22d36b', '#ff7a1a', '#3ee38a', '#ffffff', '#1b4796'];
   const ps = Array.from({ length: 140 }, () => ({
     x: r.width / 2 + (Math.random() - .5) * 80, y: r.height * .55,
     vx: (Math.random() - .5) * 11, vy: -7 - Math.random() * 9, s: 5 + Math.random() * 6,
